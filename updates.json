@@ -1,10 +1,20 @@
 {
     "addons": {
         "sianapanda@livenotif.fr": {
-            "updates": []
+            "updates": [
+                {
+                    "version": "1.6.5",
+                    "update_link": "https://github.com/siffreinsg/livenotif/releases/download/v1.6.5/SianaPanda.xpi"
+                }
+            ]
         },
         "superbrioche@livenotif.fr": {
-            "updates": []
+            "updates": [
+                {
+                    "version": "1.6.5",
+                    "update_link": "https://github.com/siffreinsg/livenotif/releases/download/v1.6.5/Superbrioche.xpi"
+                }  
+             ]
         }
     }
 }
