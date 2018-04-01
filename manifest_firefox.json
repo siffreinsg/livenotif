@@ -1,0 +1,45 @@
+﻿{
+    "name": "[Name] en live",
+    "short_name": "[Name]",
+    "description": "Envoie une notification quand [Name] est en live.",
+    "version": "1.6.5",
+    "browser_action": {
+        "default_title": "[Name] est hors-ligne !",
+        "browser_style": true,
+        "default_icon": {
+            "16": "icons/icon-off16.png",
+            "32": "icons/icon-off32.png",
+            "48": "icons/icon-off48.png",
+            "128": "icons/icon-off128.png"
+        }
+    },
+    "applications": {
+        "gecko": {
+            "id": "[Name]@livenotif.fr",
+            "strict_min_version": "57.*",
+            "update_url": "https://raw.githubusercontent.com/siffreinsg/livenotif/master/updates.json"
+        }
+    },
+    "icons": {
+        "16": "icons/icon-off16.png",
+        "32": "icons/icon-off32.png",
+        "48": "icons/icon-off48.png",
+        "128": "icons/icon-off128.png"
+    },
+    "background": {
+        "scripts": [
+            "init.js",
+            "functions.js",
+            "data.js",
+            "main.js"
+        ]
+    },
+    "permissions": [
+        "*://*.youtube.com/*",
+        "*://*.googleapis.com/*",
+        "notifications",
+        "storage"
+    ],
+    "author": "Siffrein Sigy",
+    "manifest_version": 2
+}
