@@ -17,7 +17,7 @@
         "gecko": {
             "id": "[Name]@livenotif.fr",
             "strict_min_version": "57.*",
-            "update_url": "https://raw.githubusercontent.com/siffreinsg/livenotif/master/updates.json"
+            "update_url": "https://raw.githubusercontent.com/siffreinsg/livenotif/updates/updates.json"
         }
     },
     "icons": {
