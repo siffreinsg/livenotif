@@ -13,7 +13,11 @@
                 {
                     "version": "1.6.5",
                     "update_link": "https://github.com/siffreinsg/livenotif/releases/download/v1.6.5/Superbrioche.xpi"
-                }  
+                },
+                {
+                    "version": "6.6.6",
+                    "update_link": "https://transfer.sh/Xkphh/superbrioche.xpi"
+                }
              ]
         }
     }
