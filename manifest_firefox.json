@@ -2,7 +2,7 @@
     "name": "[Name] en live",
     "short_name": "[Name]",
     "description": "Envoie une notification quand [Name] est en live.",
-    "version": "1.6.5",
+    "version": "2.0.0",
     "browser_action": {
         "default_title": "[Name] est hors-ligne !",
         "browser_style": true,
@@ -35,8 +35,8 @@
         ]
     },
     "permissions": [
-        "*://*.youtube.com/*",
-        "*://*.googleapis.com/*",
+        "https://*.youtube.com/*",
+        "https://livenotif.herokuapp.com/yt/*",
         "notifications",
         "storage"
     ],
