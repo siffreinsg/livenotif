@@ -40,14 +40,14 @@ const addon = {
 
         // On firefox: API return promises
         // On chrome: API use a callback
-        if (software === 'firefox') browser.notifications.create(notif).then((createdId) => addon.notifEvent(createdId))
-        else if (software === 'chrome') chrome.notifications.create(notif, (createdId) => addon.notifEvent(createdId))
+        if (software === 'firefox') browser.notifications.create(notif).then((createdId) => addon.notifEvent(createdId, content))
+        else if (software === 'chrome') chrome.notifications.create(notif, (createdId) => addon.notifEvent(createdId, content))
     },
 
     /**
      * Handle notif events
      */
-    notifEvent: (createdId) => {
+    notifEvent: (createdId, content) => {
         scope.notifications.onClicked.addListener((clickedId) => {
             if (clickedId === createdId) {
                 scope.notifications.clear(clickedId)
