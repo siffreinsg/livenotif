@@ -1,0 +1,7 @@
+{
+    "API_URL": "https://livenotif.glitch.me",
+    
+    "createEvent":[
+        {id: 'EXAMPLE_IGNORE_ME', type: 'notif', content: {}, startTime: 1523781000000, endTime: 1523782000000}
+    ]
+}
