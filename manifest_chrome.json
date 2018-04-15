@@ -29,7 +29,7 @@
     },
     "permissions": [
         "https://*.youtube.com/*",
-        "https://livenotif.herokuapp.com/yt/*",
+        "https://livenotif.glitch.me/yt/*",
         "notifications",
         "storage"
     ],

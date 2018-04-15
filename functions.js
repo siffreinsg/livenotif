@@ -2,8 +2,8 @@ const channel = {
     /*
     Get data on a channel from the api hosted on heroku
     */
-    getData: (channelid, callback) => {
-        let callURL = 'https://livenotif.herokuapp.com/yt/' + channelid
+    getData: (channelID, callback) => {
+        let callURL = 'https://livenotif.glitch.me/yt/' + channelID
 
         fetch(new Request(callURL))
             .then((resp) => { return resp.json() })

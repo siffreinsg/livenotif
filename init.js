@@ -17,5 +17,5 @@ if (typeof browser === 'object') {
  */
 const tmp = {
     onAir: false,
-    redirectUrl: ""
+    redirectUrl: ''
 }
