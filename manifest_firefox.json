@@ -2,7 +2,7 @@
     "name": "[Name] en live",
     "short_name": "[Name]",
     "description": "Envoie une notification quand [Name] est en live.",
-    "version": "2.0.0",
+    "version": "2.5.0",
     "browser_action": {
         "default_title": "[Name] est hors-ligne !",
         "browser_style": true,
@@ -33,9 +33,14 @@
             "main.js"
         ]
     },
+    "options_ui": {
+        "page": "options/options.html",
+        "browser_style": true
+    },
     "permissions": [
-        "https://*.youtube.com/*",
-        "https://livenotif.glitch.me/yt/*",
+        "https://img.youtube.com/*",
+        "https://static-cdn.jtvnw.net/*",
+        "https://livenotif-api.glitch.me/*",
         "notifications",
         "storage"
     ],

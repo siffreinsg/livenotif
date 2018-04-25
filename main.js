@@ -1,81 +1,83 @@
-addon.updateButton('icons/icon-off48.png', params.name + ' est hors-ligne !')
-scope.browserAction.onClicked.addListener(() => scope.tabs.create({ url: tmp.redirectUrl }))
-
-setInterval(loop, 1 * 60 * 1000) // Toutes les minutes on recommence une routine
-setTimeout(loop, 1000) // On attend 1s après le démarrage du navigateur et on envoie une notif
-
 function loop() {
-    // On récup les données
-    channel.getData(params.id, (stream, videos) => {
-        // On appelle le stream handler
-        StreamHandler(stream)
+    if (software === 'chrome') {
+        scope.storage.local.get(['lastVideosID', 'lastStreamID'], result => getData(result.lastVideosID, result.lastStreamID))
+    } else if (software === 'firefox') {
+        scope.storage.local.get(['lastVideosID', 'lastStreamID']).then(result => getData(result.lastVideosID, result.lastStreamID))
+    }
+}
 
-        // On récupère les infos sur les précédentes vidéos puis on appelle le video handler
-        if (software === 'chrome') {
-            chrome.storage.local.get(['lastVideosID'], (result) => {
-                channel.checkNewVideos(videos, result.lastVideosID, VideosHandler)
-            })
-        } else if (software === 'firefox') {
-            browser.storage.local.get(['lastVideosID']).then((result) => {
-                channel.checkNewVideos(videos, result.lastVideosID, VideosHandler)
-            })
+function getData(lastVideosID, lastStreamID) {
+    if (params.IDs.twitch && params.streamOrigin === 'twitch' && tmp.announceStreams) {
+        getTWData(params.IDs.twitch, stream => StreamHandler(stream, 'twitch', lastStreamID || ''))
+    }
+
+    if (params.IDs.youtube) getYTData(params.IDs.youtube, (stream, videos) => {
+        if (tmp.announceStreams && params.streamOrigin === 'youtube') {
+            StreamHandler(stream, 'youtube', lastStreamID)
+        }
+        if (tmp.announceVideos) {
+            checkNewVideos(videos, lastVideosID, VideosHandler)
         }
     })
 }
 
-/**
- * Send a notif if a channel is on live
- * @param {Object} stream Data about the stream (Keys: id, title, thumbnail)
- */
-function StreamHandler(stream) {
-    // Si on as des infos sur un stream et qu'on est pas en mode "stream"
-    if (Object.keys(stream).length > 0 && !tmp.onAir) {
-        // On passe en mode "stream", on change l'icone, on envoie une notif
+function StreamHandler(stream, origin, lastStreamID) {
+    let streamLength = Object.keys(stream).length
+
+    if (streamLength > 0 && !tmp.onAir && lastStreamID !== stream.id) {
         tmp.onAir = true
-        tmp.redirectUrl = 'https://youtu.be/' + stream.id
-
-        addon.updateButton('icons/icon-on48.png', params.name + ' est en live !')
-
-        addon.sendNotif({
-            icon: stream.thumbnail,
-            title: 'Notification - Live',
-            message: params.name + ' est en live !\n"' + stream.title + '"' + (software === 'firefox' ? '\n\nCliquez ici pour y accéder.' : ''),
-            redirectUrl: tmp.redirectUrl
-        })
-    } else if (Object.keys(stream).length === 0 && tmp.onAir) { // Si on as plus d'info sur un stream mais qu'on est en mode "stream"
-        // On quitte le mode "stream" et on met à jour l'icone
+        tmp.redirectUrl = origin === 'twitch' ? `https://twitch.tv/${params.IDs.twitch}` : `https://youtu.be/${stream.id}`
+        scope.storage.local.set({ lastStreamID: stream.id })
+        setStatus('online')
+        sendNotif('live', stream.thumbnail, stream.game || stream.title, tmp.redirectUrl)
+    } else if (streamLength === 0 && tmp.onAir) {
         tmp.onAir = false
         tmp.redirectUrl = params.offlineURL
-        addon.updateButton('icons/icon-off48.png', params.name + ' est hors-ligne !')
+        setStatus('offline')
     }
 }
 
-/**
- * Send a notif if there are any new videos
- * @param {Array} newVideos Contains objects of all videos
- * @param {Array} lastVideosID Array of ids of the 10th last videos of a channel
- * @param {Boolean} silentNotif If true, block any notif 
- */
-function VideosHandler(newVideos, lastVideosID, silentNotif) {
+function VideosHandler(newVideos, lastVideosID, silentNotif = false) {
     let newVideosLength = newVideos.length
     scope.storage.local.set({ lastVideosID })
+    if (silentNotif) return;
 
-    if (!silentNotif) {
-        if (newVideosLength === 1) {
-            let newVideo = newVideos.shift()
-            addon.sendNotif({
-                icon: newVideo.thumbnail,
-                title: 'Notification - Vidéos',
-                message: params.name + ' a sorti une nouvelle vidéo !\n' + newVideo.title + (software === 'firefox' ? '\n\nCliquez ici pour y accéder.' : ''),
-                redirectUrl: 'https://youtu.be/' + newVideo.id
-            })
-        } else if (newVideosLength > 1) {
-            addon.sendNotif({
-                icon: 'icons/icon-on128.png',
-                title: 'Notification - Vidéos',
-                message: 'De nouvelles vidéos sont disponibles sur la chaîne YouTube de ' + params.name + ' !' + (software === 'firefox' ? '\n\nCliquez ici pour y accéder.' : ''),
-                redirectUrl: 'https://youtube.com/channel/' + channel.id + '/videos'
-            })
-        }
+    if (newVideosLength === 1) {
+        let newVideo = newVideos.shift()
+        sendNotif('1video', newVideo.thumbnail, newVideo.title, `https://youtu.be/${newVideo.id}`)
+    } else if (newVideosLength > 1) {
+        sendNotif('videos', 'icons/icon-on128.png', '', `https://youtube.com/channel/${params.IDs.youtube}/videos`)
     }
 }
+
+setStatus('offline')
+setInterval(function x() { loop(); return x }(), 60000)
+
+scope.browserAction.onClicked.addListener(() => scope.tabs.create({ url: tmp.redirectUrl }))
+scope.runtime.onInstalled.addListener(details => {
+    let notif = {}
+    switch (details.reason) {
+        case 'update':
+            notif = {
+                type: 'basic',
+                title: `LiveNotif (${params.name}) - Mis à jour`,
+                message: "L'extension a été mis à jour !\nDes changements on eu lieu et peuvent changer le comportement de l'addon.\nDécouvrez les nouveautés en cliquant ici.",
+                iconUrl: 'icons/icon-on128.png'
+            }
+            break;
+        case 'install':
+            notif = {
+                type: 'basic',
+                title: `LiveNotif (${params.name}) - Addon installé`,
+                message: "Merci pour l'installation de notre extension.\nVous pouvez en découvrir les fonctionnalités en cliquant ici !",
+                iconUrl: 'icons/icon-on128.png'
+            }
+            break;
+    }
+
+    if (software === 'firefox') {
+        browser.notifications.create(notif).then(createdId => notifEvent(createdId, 'https://github.com/siffreinsg/livenotif/releases/latest'))
+    } else if (software === 'chrome') {
+        chrome.notifications.create(notif, createdId => notifEvent(createdId, 'https://github.com/siffreinsg/livenotif/releases/latest'))
+    }
+})

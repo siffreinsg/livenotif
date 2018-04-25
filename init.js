@@ -17,5 +17,19 @@ if (typeof browser === 'object') {
  */
 const tmp = {
     onAir: false,
-    redirectUrl: ''
+    redirectUrl: '',
+    announceStreams: true,
+    announceVideos: true
+}
+
+if (software === 'chrome') {
+    chrome.storage.local.get(['notifStreams', 'notifVideos'], result => {
+        tmp.announceStreams = result.notifStreams !== 'no'
+        tmp.announceVideos = result.notifVideos !== 'no'
+    })
+} else if (software === 'firefox') {
+    browser.storage.local.get(['notifStreams', 'notifVideos']).then(result => {
+        tmp.announceStreams = result.notifStreams !== 'no'
+        tmp.announceVideos = result.notifVideos !== 'no'
+    })
 }

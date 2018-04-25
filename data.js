@@ -1,13 +1,20 @@
-/*
-Local data about a channel
-name => Displayed name on notifs and button
-id => The id of the YouTube channel
-offlineURL => The url on which an user will be redirect
-*/
+/**
+ * Addon settings
+ * 
+ * name: Displayed name on notifs
+ * offlineURL: URL on which users are redirected when there is no stream online
+ * streamOrigin: Whether we should check the stream on 'twitch' or 'youtube'
+ * IDs.youtube: YouTube channel id. If unexistant (delete it), disable YouTube checks.
+ * IDs.youtube: Twitch channel id. If unexistant (delete it), disable Twitch checks.
+ */
 const params = {
-    "name": "[NAME]",
-    "id": "[ID]",
-    "offlineURL": "[URL]"
+    name: 'Quelqu\'un',
+    offlineURL: 'https://glitch.com',
+    streamOrigin: 'twitch',
+    IDs: {
+        youtube: 'UCUwluPSnFtB0Jfxg0GXaKyA',
+        twitch: 'rocketbeanstv'
+    }
 }
 
 // Ignore this
