@@ -88,11 +88,11 @@ function setStatus(status = 'toggle', customIcon = '', customTitle = '') {
     switch (status) {
         case 'online':
             icon = 'icons/icon-on48.png'
-            title = `${params.name} est hors-ligne ! Cliquez pour accéder à sa chaîne.`
+            title = `${params.name} est en live ! Cliquez pour y accéder.`
             break
         case 'offline':
             icon = 'icons/icon-off48.png'
-            title = `${params.name} est en live ! Cliquez pour y accéder.`
+            title = `${params.name} est hors-ligne ! Cliquez pour accéder à sa chaîne.`
             break
         default:
             icon = customIcon
