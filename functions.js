@@ -46,11 +46,11 @@ function checkNewVideos(videos, lastVideosID, callback) {
  * @param {string} redirectUrl URL to which the user will be redirected
  * @param {boolean} playSound Should the notification play a sound
  */
-function sendNotif(eventType, iconUrl, eventDesc, url, playSound = true) {
+function sendNotif(eventType, iconUrl, eventDesc, url) {
     let notif = {
         type: "basic",
         message: params.name + " ",
-        iconUrl: iconUrl.replace("i.ytimg", "img.youtube"),
+        iconUrl,
     };
 
     switch (eventType) {
@@ -68,21 +68,16 @@ function sendNotif(eventType, iconUrl, eventDesc, url, playSound = true) {
             break;
     }
 
-    /* 
-    // firefox
-    notif.message += "\n\nCliquez pour ouvrir";
-
-    // chrome
-    notif.buttons = [{ title: "Ouvrir dans le navigateur" }];
-    chrome.notifications.onButtonClicked.addListener(clickedId => notifEvent(clickedId, createdId, redirectUrl));
-    */
+    if (params.software === "firefox") {
+        notif.message += "\nCliquez sur la notification pour regarder.";
+    }
 
     browser.notifications.create(notif).then(createdId => {
-        if (tmp.playSound && playSound && tmp.player) {
-            tmp.player.play();
+        if (tmp.playSound && params.notifSound) {
+            params.notifSound.play();
         }
 
-        browser.notifications.onClicked.addListener(clickedId => {
+        browser.notifications.onClicked.addListener((clickedId) => {
             if (clickedId === createdId) {
                 browser.notifications.clear(clickedId);
                 browser.tabs.create({ url });
@@ -99,10 +94,13 @@ function setStatus(status = "offline", customIcon = "", customTitle = "") {
     let icon, title;
     switch (status) {
         case "online":
+            tmp.onAir = true;
             icon = "assets/icons-on/48.png";
             title = `${params.name} est en live ! Cliquez pour y accéder.`;
             break;
         case "offline":
+            tmp.onAir = false;
+            tmp.redirectUrl = params.offlineURL;
             icon = "assets/icons-off/48.png";
             title = `${params.name} est hors-ligne ! Cliquez pour accéder à sa chaîne.`;
             break;

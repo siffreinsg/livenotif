@@ -14,18 +14,16 @@ function saveOptions(event) {
     event.preventDefault();
 }
 
-function restoreOptions(result) {
-    elements.streams.checked = result.notifStreams !== "no";
-    elements.videos.checked = result.notifVideos !== "no";
-    elements.sound.checked = result.playSound !== "no";
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     elements.streams.onchange = saveOptions;
     elements.videos.onchange = saveOptions;
     elements.sound.onchange = saveOptions;
 
-    browser.storage.local.get(["notifStreams", "notifVideos", "playSound"]).then(restoreOptions);
+    browser.storage.local.get(["notifStreams", "notifVideos", "playSound"]).then(result => {
+        elements.streams.checked = result.notifStreams !== "no";
+        elements.videos.checked = result.notifVideos !== "no";
+        elements.sound.checked = result.playSound !== "no";
+    });
 });
 
 elements.options.addEventListener("submit", event => {

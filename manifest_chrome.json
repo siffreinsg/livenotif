@@ -2,24 +2,25 @@
     "name": "[Name] en live",
     "short_name": "[Name]",
     "description": "Envoie une notification quand [Name] est en live.",
-    "version": "2.5.0",
+    "version": "3.0.0",
     "browser_action": {
         "default_title": "[Name] est hors-ligne !",
         "default_icon": {
-            "16": "assets/icon-off16.png",
-            "32": "assets/icon-off32.png",
-            "48": "assets/icon-off48.png",
-            "128": "assets/icon-off128.png"
+            "16": "assets/icons-off/16.png",
+            "32": "assets/icons-off/32.png",
+            "48": "assets/icons-off/48.png",
+            "128": "assets/icons-off/128.png"
         }
     },
     "icons": {
-        "16": "assets/icon-on16.png",
-        "32": "assets/icon-on32.png",
-        "48": "assets/icon-on48.png",
-        "128": "assets/icon-on128.png"
+        "16": "assets/icons-on/16.png",
+        "32": "assets/icons-on/32.png",
+        "48": "assets/icons-on/48.png",
+        "128": "assets/icons-on/128.png"
     },
     "background": {
         "scripts": [
+            "assets/browser-polyfill.min.js",
             "init.js",
             "functions.js",
             "data.js",
@@ -30,7 +31,7 @@
         "page": "options/options.html"
     },
     "permissions": [
-        "https://img.youtube.com/*",
+        "https://i.ytimg.com/*",
         "https://static-cdn.jtvnw.net/*",
         "https://livenotif-api.glitch.me/*",
         "notifications",

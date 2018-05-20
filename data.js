@@ -6,23 +6,19 @@
  * streamOrigin: Whether we should check the stream on 'twitch' or 'youtube'
  * IDs.youtube: YouTube channel id. If unexistant, disable YouTube checks.
  * IDs.youtube: Twitch channel id. If unexistant, disable Twitch checks.
- * notifSoundURL: URL of an audio file. If unexistant, disable sounds
- * checkInterval: Check interval in seconds
+ * notifSound: URL of an audio file. If unexistant, disable sounds.
+ * checkInterval: Check interval in seconds.
+ * software: "firefox" or "chrome"
  */
 const params = {
     name: "NAME",
     offlineURL: "https://google.com",
     IDs: {
-        youtube: "UCA5sfitizqs1oEbB5KY4uKQ",
-        twitch: "aypierre"
+        youtube: "YOUTUBE ID",
+        twitch: "TWITCH ID"
     },
     streamOrigin: "twitch",
-    notifSoundURL: "assets/notif.mp3",
-    checkInterval: 60
+    notifSound: new Audio("assets/notif.mp3"),
+    checkInterval: 60,
+    software: "firefox",
 };
-
-// Ignore this
-tmp.redirectUrl = params.offlineURL;
-if (params.notifSoundURL) {
-    tmp.player = new Audio(params.notifSoundURL);
-}
