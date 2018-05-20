@@ -10,8 +10,7 @@ function saveOptions(event) {
     let notifVideos = elements.videos.checked ? "yes" : "no";
     let playSound = elements.sound.checked ? "yes" : "no";
 
-    if (typeof browser === "object") browser.storage.local.set({ notifStreams, notifVideos, playSound });
-    else if (typeof chrome === "object") chrome.storage.local.set({ notifStreams, notifVideos, playSound });
+    browser.storage.local.set({ notifStreams, notifVideos, playSound });
     event.preventDefault();
 }
 
@@ -26,18 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
     elements.videos.onchange = saveOptions;
     elements.sound.onchange = saveOptions;
 
-    if (typeof browser === "object") {
-        browser.storage.local.get(["notifStreams", "notifVideos", "playSound"]).then(restoreOptions);
-    } else if (typeof chrome === "object") {
-        chrome.storage.local.get(["notifStreams", "notifVideos", "playSound"], restoreOptions);
-    }
+    browser.storage.local.get(["notifStreams", "notifVideos", "playSound"]).then(restoreOptions);
 });
 
 elements.options.addEventListener("submit", event => {
     saveOptions(event);
-    if (typeof browser === "object") {
-        browser.runtime.reload();
-    } else if (typeof chrome === "object") {
-        chrome.runtime.reload();
-    }
+    browser.runtime.reload();
 });

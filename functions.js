@@ -46,48 +46,49 @@ function checkNewVideos(videos, lastVideosID, callback) {
  * @param {string} redirectUrl URL to which the user will be redirected
  * @param {boolean} playSound Should the notification play a sound
  */
-function sendNotif(eventType, iconUrl, eventDesc, redirectUrl, playSound = true) {
-    let notif = { type: "basic", title: "Notification", message: params.name + " ", iconUrl: iconUrl.replace("i.ytimg", "img.youtube") };
+function sendNotif(eventType, iconUrl, eventDesc, url, playSound = true) {
+    let notif = {
+        type: "basic",
+        message: params.name + " ",
+        iconUrl: iconUrl.replace("i.ytimg", "img.youtube"),
+    };
+
     switch (eventType) {
         case "live":
-            notif.title += " - Live";
+            notif.title = "Alerte - Live";
             notif.message += `est en live !\n> ${eventDesc}`;
             break;
         case "1video":
-            notif.title += " - Vidéo";
+            notif.title = "Alerte - Vidéo";
             notif.message += `a sorti une nouvelle vidéo !\n> ${eventDesc}`;
             break;
         case "videos":
-            notif.title += " - Vidéos";
+            notif.title = "Alerte - Vidéos";
             notif.message += "a sorti de nouvelles vidéos sur sa chaîne YouTube !";
             break;
     }
 
-    if (software === "firefox") {
-        notif.message += "\n\nCliquez pour ouvrir";
-        browser.notifications.create(notif).then(createdId => {
-            if (tmp.playSound && playSound && tmp.player) {
-                tmp.player.play();
-            }
-            browser.notifications.onClicked.addListener(clickedId => notifEvent(clickedId, createdId, redirectUrl));
-        });
-    } else if (software === "chrome") {
-        notif.buttons = [{ title: "Ouvrir dans le navigateur" }];
-        chrome.notifications.create(notif, createdId => {
-            if (tmp.playSound && playSound && tmp.player) {
-                tmp.player.play();
-            }
-            chrome.notifications.onClicked.addListener(clickedId => notifEvent(clickedId, createdId, redirectUrl));
-            chrome.notifications.onButtonClicked.addListener(clickedId => notifEvent(clickedId, createdId, redirectUrl));
-        });
-    }
-}
+    /* 
+    // firefox
+    notif.message += "\n\nCliquez pour ouvrir";
 
-function notifEvent(clickedId, createdId, redirectUrl) {
-    if (clickedId === createdId) {
-        scope.notifications.clear(clickedId);
-        scope.tabs.create({ url: redirectUrl }).catch(err => { /* osef si ça ouvre pas */ });
-    }
+    // chrome
+    notif.buttons = [{ title: "Ouvrir dans le navigateur" }];
+    chrome.notifications.onButtonClicked.addListener(clickedId => notifEvent(clickedId, createdId, redirectUrl));
+    */
+
+    browser.notifications.create(notif).then(createdId => {
+        if (tmp.playSound && playSound && tmp.player) {
+            tmp.player.play();
+        }
+
+        browser.notifications.onClicked.addListener(clickedId => {
+            if (clickedId === createdId) {
+                browser.notifications.clear(clickedId);
+                browser.tabs.create({ url });
+            }
+        });
+    });
 }
 
 /**
@@ -98,11 +99,11 @@ function setStatus(status = "offline", customIcon = "", customTitle = "") {
     let icon, title;
     switch (status) {
         case "online":
-            icon = "assets/icon-on48.png";
+            icon = "assets/icons-on/48.png";
             title = `${params.name} est en live ! Cliquez pour y accéder.`;
             break;
         case "offline":
-            icon = "assets/icon-off48.png";
+            icon = "assets/icons-off/48.png";
             title = `${params.name} est hors-ligne ! Cliquez pour accéder à sa chaîne.`;
             break;
         default:
@@ -111,8 +112,8 @@ function setStatus(status = "offline", customIcon = "", customTitle = "") {
             break;
     }
 
-    scope.browserAction.setIcon({ path: icon });
-    scope.browserAction.setTitle({ title });
+    browser.browserAction.setIcon({ path: icon });
+    browser.browserAction.setTitle({ title });
 }
 
 /**
