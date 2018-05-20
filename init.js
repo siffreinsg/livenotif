@@ -19,17 +19,18 @@ const tmp = {
     onAir: false,
     redirectUrl: "",
     announceStreams: true,
-    announceVideos: true
+    announceVideos: true,
+    playSound: true,
 };
 
+function loadOptions(result) {
+    tmp.announceStreams = result.notifStreams !== "no";
+    tmp.announceVideos = result.notifVideos !== "no";
+    tmp.playSound = result.playSound !== "no";
+}
+
 if (software === "chrome") {
-    chrome.storage.local.get(["notifStreams", "notifVideos"], result => {
-        tmp.announceStreams = result.notifStreams !== "no";
-        tmp.announceVideos = result.notifVideos !== "no";
-    });
+    chrome.storage.local.get(["notifStreams", "notifVideos", "playSound"], loadOptions);
 } else if (software === "firefox") {
-    browser.storage.local.get(["notifStreams", "notifVideos"]).then(result => {
-        tmp.announceStreams = result.notifStreams !== "no";
-        tmp.announceVideos = result.notifVideos !== "no";
-    });
+    browser.storage.local.get(["notifStreams", "notifVideos", "playSound"]).then(loadOptions);
 }

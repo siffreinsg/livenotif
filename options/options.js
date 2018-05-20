@@ -1,29 +1,43 @@
-function saveOptions(event) {
-    let notifStreams = document.getElementById("streams").checked ? "yes" : "no",
-        notifVideos = document.getElementById("videos").checked ? "yes" : "no";
+const elements = {
+    streams: document.getElementById("streams"),
+    videos: document.getElementById("videos"),
+    sound: document.getElementById("sound"),
+    options: document.getElementById("options"),
+};
 
-    if (typeof browser === "object") browser.storage.local.set({ notifStreams, notifVideos });
-    else if (typeof chrome === "object") chrome.storage.local.set({ notifStreams, notifVideos });
+function saveOptions(event) {
+    let notifStreams = elements.streams.checked ? "yes" : "no";
+    let notifVideos = elements.videos.checked ? "yes" : "no";
+    let playSound = elements.sound.checked ? "yes" : "no";
+
+    if (typeof browser === "object") browser.storage.local.set({ notifStreams, notifVideos, playSound });
+    else if (typeof chrome === "object") chrome.storage.local.set({ notifStreams, notifVideos, playSound });
     event.preventDefault();
 }
 
 function restoreOptions(result) {
-    document.getElementById("streams").checked = result.notifStreams !== "no";
-    document.getElementById("videos").checked = result.notifVideos !== "no";
+    elements.streams.checked = result.notifStreams !== "no";
+    elements.videos.checked = result.notifVideos !== "no";
+    elements.sound.checked = result.playSound !== "no";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("streams").onchange = saveOptions;
-    document.getElementById("videos").onchange = saveOptions;
+    elements.streams.onchange = saveOptions;
+    elements.videos.onchange = saveOptions;
+    elements.sound.onchange = saveOptions;
 
-    if (typeof browser === "object")
-        browser.storage.local.get(["notifStreams", "notifVideos"]).then(restoreOptions);
-    else if (typeof chrome === "object")
-        chrome.storage.local.get(["notifStreams", "notifVideos"], restoreOptions);
+    if (typeof browser === "object") {
+        browser.storage.local.get(["notifStreams", "notifVideos", "playSound"]).then(restoreOptions);
+    } else if (typeof chrome === "object") {
+        chrome.storage.local.get(["notifStreams", "notifVideos", "playSound"], restoreOptions);
+    }
 });
 
-document.getElementById("options").addEventListener("submit", event => {
+elements.options.addEventListener("submit", event => {
     saveOptions(event);
-    if (typeof browser === "object") browser.runtime.reload();
-    else if (typeof chrome === "object") chrome.runtime.reload();
+    if (typeof browser === "object") {
+        browser.runtime.reload();
+    } else if (typeof chrome === "object") {
+        chrome.runtime.reload();
+    }
 });
