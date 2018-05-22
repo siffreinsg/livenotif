@@ -55,15 +55,15 @@ function sendNotif(eventType, iconUrl, eventDesc, url) {
 
     switch (eventType) {
         case "live":
-            notif.title = "Alerte - Live";
-            notif.message += `est en live !\n> ${eventDesc}`;
+            notif.title = `${params.name} - LIVE`;
+            notif.message += `est en live !\n>> ${eventDesc}`;
             break;
         case "1video":
-            notif.title = "Alerte - Vidéo";
-            notif.message += `a sorti une nouvelle vidéo !\n> ${eventDesc}`;
+            notif.title = `${params.name} - VIDEO`;
+            notif.message += `a sorti une nouvelle vidéo !\n>> ${eventDesc}`;
             break;
         case "videos":
-            notif.title = "Alerte - Vidéos";
+            notif.title = `${params.name} - VIDEOS`;
             notif.message += "a sorti de nouvelles vidéos sur sa chaîne YouTube !";
             break;
     }
@@ -121,4 +121,8 @@ function setStatus(status = "offline", customIcon = "", customTitle = "") {
 function isEmpty(obj) {
     for (let x in obj) { return false; }
     return true;
+}
+
+function getUsefulVars() {
+    return { tmp, params };
 }

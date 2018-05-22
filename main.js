@@ -22,10 +22,19 @@ function StreamHandler(stream, origin, lastStreamID) {
 
     if (!streamIsEmpty > 0 && !tmp.onAir && lastStreamID !== stream.id) {
         tmp.redirectUrl = (origin === "twitch" ? `https://twitch.tv/${params.IDs.twitch}` : `https://www.youtube.com/channel/${params.IDs.youtube}/live`);
+
+        tmp.currentStream = {
+            publishedAt: stream.publishedAt,
+            thumbnail: stream.thumbnail,
+            title: stream.game || stream.title || "UNDEFINED",
+            url: tmp.redirectUrl,
+        };
+
         browser.storage.local.set({ lastStreamID: stream.id });
         setStatus("online");
-        sendNotif("live", stream.thumbnail, stream.game || stream.title, tmp.redirectUrl);
+        sendNotif("live", tmp.currentStream.thumbnail, tmp.currentStream.title, tmp.currentStream.url);
     } else if (streamIsEmpty && tmp.onAir) {
+        tmp.currentStream = {};
         setStatus("offline");
     }
 }
@@ -43,10 +52,10 @@ function VideosHandler(newVideos, lastVideosID, silentNotif = false) {
 }
 
 setStatus("offline");
-setInterval(function x() { loop(); return x; }(), params.checkInterval * 1000);
+// setInterval(function x() { loop(); return x; }(), params.checkInterval * 1000);
 
-browser.browserAction.onClicked.addListener(() => browser.tabs.create({ url: tmp.redirectUrl }));
-browser.runtime.onInstalled.addListener(details => {
+// browser.browserAction.onClicked.addListener(() => browser.tabs.create({ url: tmp.redirectUrl }));
+/* browser.runtime.onInstalled.addListener(details => {
     let notif = { type: "basic", iconUrl: "assets/icons-on/128.png", title: `LiveNotif (${params.name}) - ` };
     switch (details.reason) {
         case "update":
@@ -82,3 +91,4 @@ browser.runtime.onInstalled.addListener(details => {
         });
     });
 });
+*/

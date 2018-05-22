@@ -11,11 +11,18 @@
  * software: "firefox" or "chrome"
  */
 const params = {
-    name: "NAME",
+    name: "name",
     offlineURL: "https://google.com",
     IDs: {
-        youtube: "YOUTUBE ID",
-        twitch: "TWITCH ID"
+        youtube: "yt",
+        twitch: "twitch"
+    },
+    socials: {
+        youtube: "https://youtube.com",
+        twitch: "https://twitch.com",
+        facebook: "https://facebook.com",
+        twitter: "https://twitter.com",
+        instagram: "https://instagram.com",
     },
     streamOrigin: "twitch",
     notifSound: new Audio("assets/notif.mp3"),
