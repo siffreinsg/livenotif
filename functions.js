@@ -100,7 +100,6 @@ function setStatus(status = "offline", customIcon = "", customTitle = "") {
             break;
         case "offline":
             tmp.onAir = false;
-            tmp.redirectUrl = params.offlineURL;
             icon = "assets/icons-off/48.png";
             title = `${params.name} est hors-ligne ! Cliquez pour accéder à sa chaîne.`;
             break;
@@ -123,6 +122,14 @@ function isEmpty(obj) {
     return true;
 }
 
+/**
+ * Returns useful vars from background page
+ * Use this in options or popup
+ */
 function getUsefulVars() {
     return { tmp, params };
+}
+
+function capsFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }

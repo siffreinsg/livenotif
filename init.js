@@ -5,7 +5,6 @@
 const tmp = {
     onAir: false,
     currentStream: {},
-    redirectUrl: "",
     announceStreams: true,
     announceVideos: true,
     playSound: true,

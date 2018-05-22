@@ -61,7 +61,8 @@ a:active > span {
 }
 
 .is-online .game,
-.is-online .since {
+.is-online .since,
+.is-online .url {
 	font-size: 16px;
 }
 
@@ -70,6 +71,9 @@ a:active > span {
 }
 .is-online .fa-since {
 	color: #70a6de
+}
+.is-online .fa-url {
+	color: #f45942
 }
 
 .footer > div {

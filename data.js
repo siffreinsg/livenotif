@@ -11,11 +11,11 @@
  * software: "firefox" or "chrome"
  */
 const params = {
-    name: "name",
+    name: "NAME",
     offlineURL: "https://google.com",
     IDs: {
-        youtube: "yt",
-        twitch: "twitch"
+        youtube: "UCA5sfitizqs1oEbB5KY4uKQ",
+        twitch: "rocketbeanstv"
     },
     socials: {
         youtube: "https://youtube.com",

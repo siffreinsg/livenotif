@@ -21,13 +21,11 @@ function StreamHandler(stream, origin, lastStreamID) {
     let streamIsEmpty = isEmpty(stream);
 
     if (!streamIsEmpty > 0 && !tmp.onAir && lastStreamID !== stream.id) {
-        tmp.redirectUrl = (origin === "twitch" ? `https://twitch.tv/${params.IDs.twitch}` : `https://www.youtube.com/channel/${params.IDs.youtube}/live`);
-
         tmp.currentStream = {
             publishedAt: stream.publishedAt,
             thumbnail: stream.thumbnail,
             title: stream.game || stream.title || "UNDEFINED",
-            url: tmp.redirectUrl,
+            url: (origin === "twitch" ? `https://twitch.tv/${params.IDs.twitch}` : `https://www.youtube.com/channel/${params.IDs.youtube}/live`),
         };
 
         browser.storage.local.set({ lastStreamID: stream.id });
@@ -54,7 +52,6 @@ function VideosHandler(newVideos, lastVideosID, silentNotif = false) {
 setStatus("offline");
 // setInterval(function x() { loop(); return x; }(), params.checkInterval * 1000);
 
-// browser.browserAction.onClicked.addListener(() => browser.tabs.create({ url: tmp.redirectUrl }));
 /* browser.runtime.onInstalled.addListener(details => {
     let notif = { type: "basic", iconUrl: "assets/icons-on/128.png", title: `LiveNotif (${params.name}) - ` };
     switch (details.reason) {

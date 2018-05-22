@@ -1,4 +1,5 @@
-const { tmp, params } = browser.extension.getBackgroundPage().getUsefulVars();
+const bg = browser.extension.getBackgroundPage();
+const { tmp, params } = bg.getUsefulVars();
 
 timeago.register("fr_FR", (number, index) => {
 	return [
@@ -20,16 +21,21 @@ timeago.register("fr_FR", (number, index) => {
 });
 
 if (tmp.onAir) {
-	document.getElementById("title").appendChild(document.createTextNode(params.name));
-	document.getElementById("game").appendChild(document.createTextNode(tmp.currentStream.title));
-	document.getElementById("since").appendChild(document.createTextNode(timeago().format(new Date(tmp.currentStream.publishedAt), "fr_FR")));
+	let title = document.createTextNode(`${params.name} est en live !`);
+	let game = tmp.currentStream.title;
+	let time = timeago().format(new Date(tmp.currentStream.publishedAt), "fr_FR");
+	let url = tmp.currentStream.url;
+
+	document.getElementById("title").appendChild(title);
+	document.getElementById("game").appendChild(document.createTextNode(game));
+	document.getElementById("since").appendChild(document.createTextNode(time));
+	document.getElementById("url").href = url;
 }
 
 let todelete = document.getElementById(tmp.onAir ? "is-offline" : "is-online");
 todelete.parentNode.removeChild(todelete);
 
 const socials = params.socials;
-
 Object.keys(socials).forEach((key) => {
 	document.getElementById(key).href = socials[key];
 });
