@@ -1,5 +1,4 @@
-const bg = browser.extension.getBackgroundPage();
-const { tmp, params } = bg.getUsefulVars();
+const { tmp, params } = browser.extension.getBackgroundPage().getUsefulVars();
 
 timeago.register("fr_FR", (number, index) => {
 	return [
@@ -21,7 +20,7 @@ timeago.register("fr_FR", (number, index) => {
 });
 
 if (tmp.onAir) {
-	let title = document.createTextNode(`${params.name} est en live !`);
+	let title = document.createTextNode(params.name + " est en live!");
 	let game = tmp.currentStream.title;
 	let time = timeago().format(new Date(tmp.currentStream.publishedAt), "fr_FR");
 	let url = tmp.currentStream.url;
@@ -37,7 +36,14 @@ todelete.parentNode.removeChild(todelete);
 
 const socials = params.socials;
 Object.keys(socials).forEach((key) => {
-	document.getElementById(key).href = socials[key];
+	let link = socials[key];
+
+	if (link.length < 1) {
+		let todelete = document.getElementById(key);
+		todelete.parentNode.removeChild(todelete);
+	} else {
+		document.getElementById("a-" + key).href = link;
+	}
 });
 
 let footerChilds = document.getElementById("footer").children;

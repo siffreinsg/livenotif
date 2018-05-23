@@ -45,15 +45,15 @@ function VideosHandler(newVideos, lastVideosID, silentNotif = false) {
         let newVideo = newVideos.shift();
         sendNotif("1video", newVideo.thumbnail, newVideo.title, `https://youtu.be/${newVideo.id}`);
     } else {
-        sendNotif("videos", "assets/icons-on/128.png", "", `https://youtube.com/channel/${params.IDs.youtube}/videos`);
+        sendNotif("videos", "assets/icons/on/128.png", "", `https://youtube.com/channel/${params.IDs.youtube}/videos`);
     }
 }
 
 setStatus("offline");
-// setInterval(function x() { loop(); return x; }(), params.checkInterval * 1000);
+setInterval(function x() { loop(); return x; }(), params.checkInterval * 1000);
 
-/* browser.runtime.onInstalled.addListener(details => {
-    let notif = { type: "basic", iconUrl: "assets/icons-on/128.png", title: `LiveNotif (${params.name}) - ` };
+browser.runtime.onInstalled.addListener(details => {
+    let notif = { type: "basic", iconUrl: "assets/icons/on/128.png", title: `LiveNotif (${params.name}) - ` };
     switch (details.reason) {
         case "update":
             notif.title += "Mise à jour";
@@ -88,4 +88,3 @@ setStatus("offline");
         });
     });
 });
-*/

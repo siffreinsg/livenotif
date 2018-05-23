@@ -13,17 +13,17 @@
         "default_title": "[Name] est hors-ligne !",
         "browser_style": true,
         "default_icon": {
-            "16": "assets/icons-off/16.png",
-            "32": "assets/icons-off/32.png",
-            "48": "assets/icons-off/48.png",
-            "128": "assets/icons-off/128.png"
+            "16": "assets/icons/off/16.png",
+            "32": "assets/icons/off/32.png",
+            "48": "assets/icons/off/48.png",
+            "128": "assets/icons/off/128.png"
         }
     },
     "icons": {
-        "16": "assets/icons-on/16.png",
-        "32": "assets/icons-on/32.png",
-        "48": "assets/icons-on/48.png",
-        "128": "assets/icons-on/128.png"
+        "16": "assets/icons/on/16.png",
+        "32": "assets/icons/on/32.png",
+        "48": "assets/icons/on/48.png",
+        "128": "assets/icons/on/128.png"
     },
     "background": {
         "scripts": [

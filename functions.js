@@ -73,8 +73,8 @@ function sendNotif(eventType, iconUrl, eventDesc, url) {
     }
 
     browser.notifications.create(notif).then(createdId => {
-        if (tmp.playSound && params.notifSound) {
-            params.notifSound.play();
+        if (tmp.playSound && params.sounds[tmp.selectedSound]) {
+            params.sounds[tmp.selectedSound].player.play();
         }
 
         browser.notifications.onClicked.addListener((clickedId) => {
@@ -95,12 +95,12 @@ function setStatus(status = "offline", customIcon = "", customTitle = "") {
     switch (status) {
         case "online":
             tmp.onAir = true;
-            icon = "assets/icons-on/48.png";
+            icon = "assets/icons/on/48.png";
             title = `${params.name} est en live ! Cliquez pour y accéder.`;
             break;
         case "offline":
             tmp.onAir = false;
-            icon = "assets/icons-off/48.png";
+            icon = "assets/icons/off/48.png";
             title = `${params.name} est hors-ligne ! Cliquez pour accéder à sa chaîne.`;
             break;
         default:
