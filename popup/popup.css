@@ -16,19 +16,12 @@ span {
 
 html, body {
 	margin: 0;
-	width: 340px;
+	width: 350px;
 	color: #8f9b92;
 }
 
 body {
 	background-color: #fff;	
-}
-
-a:hover,
-a:active,
-a:hover > span,
-a:active > span {
-	cursor: pointer;
 }
 
 .row {
@@ -47,7 +40,7 @@ a:active > span {
 
 .is-offline {
 	text-align: center;
-	font-size: 16px;
+	font-size: 18px;
 }
 
 .is-online .title {

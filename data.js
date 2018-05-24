@@ -24,7 +24,8 @@ const socials = {
 };
 
 const sounds = [
-    { name: "Par défaut", player: new Audio("assets/sounds/notif.mp3") }
+    { name: "Par défaut", player: new Audio("assets/sounds/ameno.mp3") },
+    { name: "Yameteeee", player: new Audio("assets/sounds/yamete.mp3") }
 ];
 
 const params = {

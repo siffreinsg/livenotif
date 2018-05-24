@@ -20,7 +20,7 @@
     },
     "background": {
         "scripts": [
-            "assets/browser-polyfill.min.js",
+            "assets/js/browser-polyfill.min.js",
             "init.js",
             "functions.js",
             "data.js",
