@@ -13,6 +13,10 @@
                 {
                     "version": "2.5.1",
                     "update_link": "https://github.com/siffreinsg/livenotif/releases/download/v2.5.1/SianaPanda.xpi"
+                },
+                {
+                    "version": "3.0.1",
+                    "update_link": "https://github.com/siffreinsg/livenotif/releases/download/v3.0.1/Siana.xpi"
                 }
             ]
         },
@@ -29,6 +33,10 @@
                 {
                     "version": "2.5.1",
                     "update_link": "https://github.com/siffreinsg/livenotif/releases/download/v2.5.1/Superbrioche.xpi"
+                },
+                {
+                    "version": "3.0.1",
+                    "update_link": "https://github.com/siffreinsg/livenotif/releases/download/v3.0.1/Superbrioche.xpi"
                 }
              ]
         },
@@ -37,6 +45,10 @@
                 {
                     "version": "2.5.1",
                     "update_link": "https://github.com/siffreinsg/livenotif/releases/download/v2.5.1/Aypierre.xpi"
+                },
+                {
+                    "version": "3.0.1",
+                    "update_link": "https://github.com/siffreinsg/livenotif/releases/download/v3.0.1/Aypierre.xpi"
                 }
             ]
         }
