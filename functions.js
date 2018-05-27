@@ -74,7 +74,9 @@ function sendNotif(eventType, iconUrl, eventDesc, url) {
 
     browser.notifications.create(notif).then(createdId => {
         if (tmp.playSound && params.sounds[tmp.selectedSound]) {
-            params.sounds[tmp.selectedSound].player.play();
+            let player = params.sounds[tmp.selectedSound].player;
+            player.volume = tmp.volume;
+            player.play();
         }
 
         browser.notifications.onClicked.addListener((clickedId) => {

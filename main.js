@@ -20,7 +20,7 @@ function loop() {
 function StreamHandler(stream, origin, lastStreamID) {
     let streamIsEmpty = isEmpty(stream);
 
-    if (!streamIsEmpty > 0 && !tmp.onAir && lastStreamID !== stream.id) {
+    if (!streamIsEmpty > 0 && !tmp.onAir) {
         tmp.currentStream = {
             publishedAt: stream.publishedAt,
             thumbnail: stream.thumbnail,
@@ -30,7 +30,9 @@ function StreamHandler(stream, origin, lastStreamID) {
 
         browser.storage.local.set({ lastStreamID: stream.id });
         setStatus("online");
-        sendNotif("live", tmp.currentStream.thumbnail, tmp.currentStream.title, tmp.currentStream.url);
+        if (lastStreamID !== stream.id) {
+            sendNotif("live", tmp.currentStream.thumbnail, tmp.currentStream.title, tmp.currentStream.url);
+        }
     } else if (streamIsEmpty && tmp.onAir) {
         tmp.currentStream = {};
         setStatus("offline");
@@ -50,7 +52,7 @@ function VideosHandler(newVideos, lastVideosID, silentNotif = false) {
 }
 
 setStatus("offline");
-setInterval(function x() { loop(); return x; }(), params.checkInterval * 1000);
+// setInterval(function x() { loop(); return x; }(), params.checkInterval * 1000);
 
 browser.runtime.onInstalled.addListener(details => {
     let notif = { type: "basic", iconUrl: "assets/icons/on/128.png", title: `LiveNotif (${params.name}) - ` };

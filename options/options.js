@@ -7,6 +7,7 @@ const elements = {
     options: document.getElementById("options"),
     select: document.getElementById("soundSelect"),
     testSound: document.getElementById("testSound"),
+    volume: document.getElementById("volume"),
 };
 
 function saveOptions(event) {
@@ -14,21 +15,23 @@ function saveOptions(event) {
     let notifVideos = elements.videos.checked ? "yes" : "no";
     let playSound = elements.sound.checked ? "yes" : "no";
     let selectedSound = elements.select.options[elements.select.selectedIndex].value;
+    let volume = elements.volume.value;
 
-    browser.storage.local.set({ notifStreams, notifVideos, playSound, selectedSound });
+    browser.storage.local.set({ notifStreams, notifVideos, playSound, selectedSound, volume });
     event.preventDefault();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    elements.streams.onchange = saveOptions;
-    elements.videos.onchange = saveOptions;
-    elements.sound.onchange = saveOptions;
-    elements.select.onchange = saveOptions;
 
-    browser.storage.local.get(["notifStreams", "notifVideos", "playSound", "selectedSound"]).then(result => {
+document.addEventListener("DOMContentLoaded", () => {
+    ["streams", "videos", "sound", "select", "volume"].forEach((key) => {
+        elements[key].onchange = saveOptions;
+    });
+
+    browser.storage.local.get(["notifStreams", "notifVideos", "playSound", "selectedSound", "volume"]).then(result => {
         elements.streams.checked = result.notifStreams !== "no";
         elements.videos.checked = result.notifVideos !== "no";
         elements.sound.checked = result.playSound !== "no";
+        elements.volume.value = result.volume;
 
         params.sounds.forEach((el, key) => {
             let opt = document.createElement("option");
@@ -43,7 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         elements.testSound.onclick = () => {
             let selectedSound = elements.select.options[elements.select.selectedIndex].value;
-            params.sounds[selectedSound].player.play();
+            let player = params.sounds[selectedSound].player;
+
+            player.volume = elements.volume.value;
+            player.play();
         };
     });
 });

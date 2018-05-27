@@ -17,7 +17,8 @@
             "32": "assets/icons/off/32.png",
             "48": "assets/icons/off/48.png",
             "128": "assets/icons/off/128.png"
-        }
+        },
+        "default_popup": "popup/popup.html"
     },
     "icons": {
         "16": "assets/icons/on/16.png",
