@@ -1,24 +1,16 @@
-﻿{
+{
     "name": "[Name] en live",
     "short_name": "[Name]",
     "description": "Envoie une notification quand [Name] est en live.",
-    "version": "3.0.0",
-    "applications": {
-        "gecko": {
-            "id": "[Name]@livenotif.fr",
-            "update_url": "https://raw.githubusercontent.com/siffreinsg/livenotif/updates/updates.json"
-        }
-    },
+    "version": "4.0.0",
     "browser_action": {
         "default_title": "[Name] est hors-ligne !",
-        "browser_style": true,
         "default_icon": {
             "16": "assets/icons/off/16.png",
             "32": "assets/icons/off/32.png",
             "48": "assets/icons/off/48.png",
             "128": "assets/icons/off/128.png"
-        },
-        "default_popup": "popup/popup.html"
+        }
     },
     "icons": {
         "16": "assets/icons/on/16.png",
@@ -29,20 +21,15 @@
     "background": {
         "scripts": [
             "assets/js/browser-polyfill.min.js",
-            "init.js",
+            "config.js",
             "functions.js",
-            "data.js",
             "main.js"
         ]
-    },
-    "options_ui": {
-        "page": "options/options.html",
-        "browser_style": true
     },
     "permissions": [
         "https://i.ytimg.com/*",
         "https://static-cdn.jtvnw.net/*",
-        "https://livenotif-api.glitch.me/*",
+        "*://locahost/*",
         "notifications",
         "storage"
     ],
