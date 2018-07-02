@@ -21,7 +21,7 @@
     "background": {
         "scripts": [
             "assets/js/browser-polyfill.min.js",
-            "config.js",
+            "init.js",
             "functions.js",
             "main.js"
         ]
