@@ -23,6 +23,7 @@
             "assets/js/browser-polyfill.min.js",
             "init.js",
             "functions.js",
+            "events.js",
             "main.js"
         ]
     },

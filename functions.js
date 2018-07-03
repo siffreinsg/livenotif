@@ -1,13 +1,3 @@
-var connect = () => {
-    let socket = null;
-    try {
-        socket = new WebSocket("ws://localhost");
-    } catch (ex) {
-        console.error("[WS] Error while connecting to the websocket.", ex);
-    }
-    return socket;
-}
-
 var send = (socket, data) => socket.send(JSON.stringify(data));
 
 var setStatus = (status) => {
@@ -15,11 +5,11 @@ var setStatus = (status) => {
     switch (status) {
         case "online":
             icon = "assets/icons/on/48.png";
-            title = `${params.name} est en live ! Cliquez pour y accéder.`;
+            title = `${config.displayName} est en live ! Cliquez pour plus d'informations.`;
             break;
         case "offline":
             icon = "assets/icons/off/48.png";
-            title = `${params.name} est hors-ligne ! Cliquez pour accéder à sa chaîne.`;
+            title = `${config.displayName} est hors-ligne ! Cliquez pour plus d'informations.`;
             break;
     }
 
@@ -28,7 +18,7 @@ var setStatus = (status) => {
 }
 
 
-var sendNotif = (event, eventDesc, url) => {
+var sendNotif = (event, url, eventDesc = "", title = "") => {
     let notif = {
         type: "basic",
         title: `${config.displayName} - `,
@@ -42,12 +32,16 @@ var sendNotif = (event, eventDesc, url) => {
             notif.message += `est en live !\n> ${eventDesc}`;
             break;
         case "1video":
-            notif.title = "VIDEO";
+            notif.title += "VIDEO";
             notif.message += `a sorti une nouvelle vidéo !\n> ${eventDesc}`;
             break;
         case "videos":
-            notif.title = "VIDEOS";
+            notif.title += "VIDEOS";
             notif.message += "a sorti de nouvelles vidéos sur sa chaîne YouTube !";
+            break;
+        case "custom":
+            notif.title = title;
+            notif.message = eventDesc;
             break;
     };
 
@@ -76,6 +70,25 @@ var StreamHandler = (stream, origin, lastStreamId) => {
     if (lastStreamId || streamId !== lastStreamId) {
         setStatus("online");
         browser.storage.local.set({ lastStreamId: streamId });
-        sendNotif("stream", streamTitle, streamUrl);
+        sendNotif("stream", streamUrl, streamTitle);
     };
+}
+
+var VideosHandler = (videos) => {
+    browser.storage.local.set({ lastVideosId: videos.map(video => video.id.videoId) });
+
+    browser.storage.local.get("lastVideosId").then((res) => {
+        if (res.lastVideosId instanceof Array) {
+            let newVideos = videos.filter(video => res.lastVideosId.indexOf(video.id.videoId) === -1);
+
+            if (newVideos.length >= 10 || newVideos.length <= 0) {
+                return;
+            } else if (newVideos.length === 1) {
+                let newVideo = newVideos.shift();
+                sendNotif("1video", `https://youtu.be/${newVideo.id.videoId}`, newVideo.title);
+            } else {
+                sendNotif("videos", `https://youtube.com/channel/${config.IDs.youtube}/videos`);
+            }
+        };
+    });
 }

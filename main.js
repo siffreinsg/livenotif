@@ -1,53 +1,66 @@
-const socket = connect();
-if (socket) {
-    socket.onerror = (ex) => console.error("[WS] Error while trying to connect.", ex);
+setStatus("offline");
+var socket = new WebSocket(socketUrl);
 
-    socket.onopen = function () {
-        console.log("[WS] Connected.");
+socket.onclose = () => {
+    console.log("[WS] Connection lost. Reconnecting in 3 minutes...");
+    setTimeout(() => {
+        browser.storage.local.set({ silentReload: "yes" }).then(() => chrome.runtime.reload());
+    }, 180000);
+};
 
-        this.onclose = () => {
-            console.log("[WS] Disconnected. Reconnecting in 2 minutes...");
-            setTimeout(connect, 120000);
-        };
+socket.onerror = (ex) => console.error("[WS] Error while trying to connect.", ex);
 
-        send(this, {
-            request: "ADDON_CONFIG",
-            channel: config.id
-        });
-    };
+socket.onopen = () => {
+    console.log("[WS] Connected.");
 
-    socket.onmessage = (event) => {
-        let data = event.data;
-        try {
-            data = JSON.parse(event.data);
-        } catch (ex) {
-            return console.error("[WS] Message received but not in a valid format", data);
-        }
+    send(socket, {
+        request: "ADDON_CONFIG",
+        channel: config.id,
+    });
+};
 
-        if (data.event) {
-            console.log(`[WS] Received ${data.event} event.`);
+socket.onmessage = (event) => {
+    let data = event.data;
+    try {
+        data = JSON.parse(event.data);
+    } catch (ex) {
+        return console.error("[WS] Message received but not in a valid format", data);
+    }
 
-            switch (data.event) {
-                case "ADDON_CONFIG":
-                    if (data.channel && data.config && data.channel === config.id) {
-                        config = { id: data.channel, ...data.config };
-                        console.log("[WS] Config saved!", config);
-                    };
-                    break;
-                case "YOUTUBE_STREAM_START":
-                case "TWITCH_STREAM_START":
-                    if (data.channel && data.channel === config.id) {
-                        let origin = data.event === "YOUTUBE_STREAM_START" ? "youtube" : "twitch"
-                        browser.storage.local.get("lastStreamId").then((res) => StreamHandler(data.stream, origin, res.lastStreamId));
-                    };
-                    break;
-                case "YOUTUBE_STREAM_END":
-                case "TWITCH_STREAM_END":
-                    if (data.channel && data.channel === config.id) {
-                        setStatus("offline");
-                    };
-                    break;
-            }
+    if (data.event) {
+        console.log(`[WS] Received ${data.event} event.`);
+
+        switch (data.event) {
+            case "ADDON_CONFIG":
+                if (data.channel && data.config && data.channel === config.id) {
+                    config = { ...config, ...data.config };
+                    console.log("[WS] Config saved!", config);
+
+                    send(socket, {
+                        request: "CURRENT_ACTIVITY",
+                        channel: config.id,
+                    });
+                };
+                break;
+            case "YOUTUBE_STREAM_START":
+            case "TWITCH_STREAM_START":
+                if (data.channel && data.channel === config.id && data.stream) {
+                    let origin = data.event === "YOUTUBE_STREAM_START" ? "youtube" : "twitch"
+                    browser.storage.local.get("lastStreamId").then((res) => StreamHandler(data.stream, origin, res.lastStreamId));
+                };
+                break;
+            case "YOUTUBE_STREAM_END":
+            case "TWITCH_STREAM_END":
+                if (data.channel && data.channel === config.id) {
+                    currentStream = {};
+                    setStatus("offline");
+                };
+                break;
+            case "YOUTUBE_NEW_VIDEOS":
+                if (data.channel && data.channel === config.id && data.videos) {
+                    VideosHandler(data.videos);
+                }
+                break;
         }
     }
 }
