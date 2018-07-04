@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="options.css">
+</head>
+
+<body>
+    <form id="options">
+        <fieldset>
+            <legend>
+                <b>Réglage des notifications</b>
+            </legend>
+
+            <label class="form-switch">
+                <input type="checkbox" id="streams">
+                <i></i>
+                <em>Annonce des streams</em>
+            </label>
+            <br>
+
+            <label class="form-switch">
+                <input type="checkbox" id="videos">
+                <i></i>
+                <em>Annonce des vidéos</em>
+            </label>
+            <br>
+
+            <label class="form-switch">
+                <input type="checkbox" id="sound">
+                <i></i>
+                <em>Générer un son</em>
+            </label>
+            <br>
+
+            <label class="form-switch">
+                <select name="soundSelect" id="soundSelect"></select>
+                Son des notifications
+            </label>
+            <br>
+
+            <label class="form-input">
+                <input type="range" step="0.1" min="0" max="1" id="volume"></input>
+                Volume des notifications
+            </label>
+            <br>
+
+            <span>
+                <button type="submit">Sauvegarder</button>
+                <button type="button" id="testSound">Tester le son</button>
+            </span>
+        </fieldset>
+    </form>
+    <script src="../assets/js/browser-polyfill.min.js"></script>
+    <script src="options.js"></script>
+</body>
+
+</html>

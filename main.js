@@ -4,7 +4,7 @@ var socket = new WebSocket(socketUrl);
 socket.onclose = () => {
     console.log("[WS] Connection lost. Reconnecting in 3 minutes...");
     setTimeout(() => {
-        browser.storage.local.set({ silentReload: "yes" }).then(() => chrome.runtime.reload());
+        browser.storage.local.set({ silentReload: "yes" }).then(() => browser.runtime.reload());
     }, 180000);
 };
 
@@ -57,7 +57,7 @@ socket.onmessage = (event) => {
                 };
                 break;
             case "YOUTUBE_NEW_VIDEOS":
-                if (data.channel && data.channel === config.id && data.videos) {
+                if (config.announceVideos && data.channel && data.channel === config.id && data.videos) {
                     VideosHandler(data.videos);
                 };
                 break;

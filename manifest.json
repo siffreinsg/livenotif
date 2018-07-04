@@ -10,13 +10,17 @@
             "32": "assets/icons/off/32.png",
             "48": "assets/icons/off/48.png",
             "128": "assets/icons/off/128.png"
-        }
+        },
+        "default_popup": "popup/popup.html"
     },
     "icons": {
         "16": "assets/icons/on/16.png",
         "32": "assets/icons/on/32.png",
         "48": "assets/icons/on/48.png",
         "128": "assets/icons/on/128.png"
+    },
+    "options_ui": {
+        "page": "options/options.html"
     },
     "background": {
         "scripts": [
@@ -30,7 +34,7 @@
     "permissions": [
         "https://i.ytimg.com/*",
         "https://static-cdn.jtvnw.net/*",
-        "*://locahost/*",
+        "http://locahost/*",
         "notifications",
         "storage"
     ],

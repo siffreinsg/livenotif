@@ -46,19 +46,16 @@ var sendNotif = (event, url, eventDesc = "", title = "") => {
     };
 
     browser.notifications.create(notif).then(createdId => {
-        /* if (tmp.playSound && params.sounds[tmp.selectedSound]) {
-            let player = params.sounds[tmp.selectedSound].player;
-            player.volume = tmp.volume;
+        if (config.playSound && sounds[config.selectedSound]) {
+            let player = sounds[config.selectedSound].player;
+            player.volume = config.volume;
             player.play();
-        } */
+        }
 
         browser.notifications.onClicked.addListener((clickedId) => {
             if (clickedId === createdId) {
                 browser.notifications.clear(clickedId);
-
-                if (url) {
-                    browser.tabs.create({ url });
-                }
+                if (url) { browser.tabs.create({ url }); }
             }
         });
     });
@@ -66,16 +63,19 @@ var sendNotif = (event, url, eventDesc = "", title = "") => {
 
 var StreamHandler = (stream, origin, lastStreamId) => {
     currentStream = stream;
+    currentStream.origin = origin;
+    setStatus("online");
+
     let streamId = origin === "youtube" ? stream.id.videoId : stream.id;
     let streamTitle = origin === "youtube" ? stream.snippet.title : stream.title;
     let streamUrl = origin === "youtube" ? `https://youtu.be/${streamId}` : `https://twitch.tv/${config.IDs.twitch}`
 
-    console.log(streamId, lastStreamId);
-
     if (streamId !== lastStreamId) {
-        setStatus("online");
         browser.storage.local.set({ lastStreamId: streamId });
-        sendNotif("stream", streamUrl, streamTitle);
+
+        if (config.announceStreams) {
+            sendNotif("stream", streamUrl, streamTitle);
+        }
     };
 }
 
