@@ -59,7 +59,12 @@ socket.onmessage = (event) => {
             case "YOUTUBE_NEW_VIDEOS":
                 if (data.channel && data.channel === config.id && data.videos) {
                     VideosHandler(data.videos);
-                }
+                };
+                break;
+            case "CUSTOM_NOTIF":
+                if (data.notif && data.notif.title && data.notif.message) {
+                    sendNotif("custom", data.notif.url, data.notif.message, data.notif.title);
+                };
                 break;
         }
     }

@@ -55,7 +55,10 @@ var sendNotif = (event, url, eventDesc = "", title = "") => {
         browser.notifications.onClicked.addListener((clickedId) => {
             if (clickedId === createdId) {
                 browser.notifications.clear(clickedId);
-                browser.tabs.create({ url });
+
+                if (url) {
+                    browser.tabs.create({ url });
+                }
             }
         });
     });
@@ -67,7 +70,9 @@ var StreamHandler = (stream, origin, lastStreamId) => {
     let streamTitle = origin === "youtube" ? stream.snippet.title : stream.title;
     let streamUrl = origin === "youtube" ? `https://youtu.be/${streamId}` : `https://twitch.tv/${config.IDs.twitch}`
 
-    if (lastStreamId || streamId !== lastStreamId) {
+    console.log(streamId, lastStreamId);
+
+    if (streamId !== lastStreamId) {
         setStatus("online");
         browser.storage.local.set({ lastStreamId: streamId });
         sendNotif("stream", streamUrl, streamTitle);
@@ -75,20 +80,21 @@ var StreamHandler = (stream, origin, lastStreamId) => {
 }
 
 var VideosHandler = (videos) => {
-    browser.storage.local.set({ lastVideosId: videos.map(video => video.id.videoId) });
-
     browser.storage.local.get("lastVideosId").then((res) => {
+        browser.storage.local.set({ lastVideosId: videos.map(video => video.snippet.resourceId.videoId) });
+
         if (res.lastVideosId instanceof Array) {
-            let newVideos = videos.filter(video => res.lastVideosId.indexOf(video.id.videoId) === -1);
+            let newVideos = videos.filter(video => res.lastVideosId.indexOf(video.snippet.resourceId.videoId) === -1);
 
             if (newVideos.length >= 10 || newVideos.length <= 0) {
                 return;
             } else if (newVideos.length === 1) {
                 let newVideo = newVideos.shift();
-                sendNotif("1video", `https://youtu.be/${newVideo.id.videoId}`, newVideo.title);
+                sendNotif("1video", `https://youtu.be/${newVideo.snippet.resourceId.videoId}`, newVideo.snippet.title);
             } else {
                 sendNotif("videos", `https://youtube.com/channel/${config.IDs.youtube}/videos`);
             }
         };
     });
+
 }
