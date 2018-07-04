@@ -62,8 +62,9 @@ socket.onmessage = (event) => {
                 };
                 break;
             case "CUSTOM_NOTIF":
+                if (data.channel && data.channel !== config.channel) return;
                 if (data.notif && data.notif.title && data.notif.message) {
-                    sendNotif("custom", data.notif.url, data.notif.message, data.notif.title);
+                    sendNotif({ event: "custom", url: data.notif.url, eventDesc: data.notif.message, title: data.notif.title });
                 };
                 break;
         }

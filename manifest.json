@@ -25,6 +25,7 @@
     "background": {
         "scripts": [
             "assets/js/browser-polyfill.min.js",
+            "assets/js/timeago/timeago.min.js",
             "init.js",
             "functions.js",
             "events.js",

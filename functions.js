@@ -18,26 +18,32 @@ var setStatus = (status) => {
 }
 
 
-var sendNotif = (event, url, eventDesc = "", title = "") => {
+var sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) => {
     let notif = {
         type: "basic",
         title: `${config.displayName} - `,
-        message: `${config.displayName} `,
+        message: "",
         iconUrl: "assets/icons/on/128.png",
     };
 
     switch (event) {
         case "stream":
-            notif.title += "LIVE";
-            notif.message += `est en live !\n> ${eventDesc}`;
+            notif.title += "Stream";
+
+            if (config.software === "firefox") notif.message += `${config.displayName} est en streaming sur ${origin === "youtube" ? "YouTube" : "Twitch"}:\n${eventDesc}\n\nEn live depuis ${timeago().format(eventStartTime, "fr_FR")}.`;
+            else notif.message += `est en stream !\n> ${eventDesc}`;
             break;
         case "1video":
-            notif.title += "VIDEO";
-            notif.message += `a sorti une nouvelle vidéo !\n> ${eventDesc}`;
+            notif.title += "Vidéo";
+
+            if (config.software === "firefox") notif.message += `Nouvelle vidéo disponible sur la chaîne YouTube de ${config.displayName}:\n${eventDesc}\n\nEn ligne depuis ${timeago().format(eventStartTime, "fr_FR")}.`;
+            else notif.message += `a sorti une nouvelle vidéo !\n> ${eventDesc}`;
             break;
         case "videos":
-            notif.title += "VIDEOS";
-            notif.message += "a sorti de nouvelles vidéos sur sa chaîne YouTube !";
+            notif.title += "Vidéos";
+
+            if (config.software === "firefox") notif.message += `De nouvelles vidéos sont disponibles sur la chaîne YouTube de ${config.displayName}.\n\nCliquez ici pour visiter la chaîne.`;
+            else notif.message += "a sorti de nouvelles vidéos sur sa chaîne YouTube !";
             break;
         case "custom":
             notif.title = title;
@@ -69,12 +75,13 @@ var StreamHandler = (stream, origin, lastStreamId) => {
     let streamId = origin === "youtube" ? stream.id.videoId : stream.id;
     let streamTitle = origin === "youtube" ? stream.snippet.title : stream.title;
     let streamUrl = origin === "youtube" ? `https://youtu.be/${streamId}` : `https://twitch.tv/${config.IDs.twitch}`
+    let streamStart = new Date(stream.origin === "youtube" ? stream.snippet.publishedAt : stream.started_at);
 
     if (streamId !== lastStreamId) {
         browser.storage.local.set({ lastStreamId: streamId });
 
         if (config.announceStreams) {
-            sendNotif("stream", streamUrl, streamTitle);
+            sendNotif({ event: "stream", url: streamUrl, eventDesc: streamTitle, eventStartTime: streamStart });
         }
     };
 }
@@ -90,9 +97,9 @@ var VideosHandler = (videos) => {
                 return;
             } else if (newVideos.length === 1) {
                 let newVideo = newVideos.shift();
-                sendNotif("1video", `https://youtu.be/${newVideo.snippet.resourceId.videoId}`, newVideo.snippet.title);
+                sendNotif({ event: "1video", url: `https://youtu.be/${newVideo.snippet.resourceId.videoId}`, eventDesc: newVideo.snippet.title, eventStartTime: newVideo.snippet.publishedAt });
             } else {
-                sendNotif("videos", `https://youtube.com/channel/${config.IDs.youtube}/videos`);
+                sendNotif({ event: "videos", url: `https://youtube.com/channel/${config.IDs.youtube}/videos` });
             }
         };
     });
