@@ -1,24 +1,28 @@
-/**
- * Object with needed properties
- * Reset at each new instance 
- */
-const tmp = {
-    onAir: false,
-    currentStream: {},
+var socketUrl = "ws://localhost";
+
+var currentStream = {};
+
+var config = {
+    software: "chrome",
+    sound: 0,
     announceStreams: true,
     announceVideos: true,
     playSound: true,
-    selectedSound: 0,
     volume: 0.5,
+    id: "rocketbeanstv"
 };
 
-/**
- * Retrieve user options from local storage
- */
+var sounds = [
+    { name: "Par défaut (Ding)", player: new Audio("assets/sounds/ding.mp3") },
+    { name: "Yamete", player: new Audio("assets/sounds/yamete.ogg") },
+    { name: "Chèvre", player: new Audio("assets/sounds/chevre.mp3") },
+    { name: "Cri viril", player: new Audio("assets/sounds/cri_bri.wav") }
+]
+
 browser.storage.local.get(["notifStreams", "notifVideos", "playSound", "selectedSound", "volume"]).then((res) => {
-    tmp.announceStreams = res.notifStreams !== "no";
-    tmp.announceVideos = res.notifVideos !== "no";
-    tmp.playSound = res.playSound === "yes";
-    tmp.selectedSound = parseInt("" + res.selectedSound) || 0;
-    tmp.volume = res.volume || "0.5";
+    config.announceStreams = res.notifStreams !== "no";
+    config.announceVideos = res.notifVideos !== "no";
+    config.playSound = res.playSound !== "no";
+    config.selectedSound = parseInt("" + res.selectedSound) || 0;
+    config.volume = parseInt("" + res.volume) || 0.5;
 });

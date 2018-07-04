@@ -1,4 +1,4 @@
-const { params } = browser.extension.getBackgroundPage().getUsefulVars();
+const { sounds } = browser.extension.getBackgroundPage();
 
 const elements = {
     streams: document.getElementById("streams"),
@@ -14,8 +14,8 @@ function saveOptions(event) {
     let notifStreams = elements.streams.checked ? "yes" : "no";
     let notifVideos = elements.videos.checked ? "yes" : "no";
     let playSound = elements.sound.checked ? "yes" : "no";
-    let selectedSound = elements.select.options[elements.select.selectedIndex].value;
-    let volume = elements.volume.value;
+    let selectedSound = elements.select.options[elements.select.selectedIndex].value || 0;
+    let volume = elements.volume.value || 0.5;
 
     browser.storage.local.set({ notifStreams, notifVideos, playSound, selectedSound, volume });
     event.preventDefault();
@@ -23,17 +23,13 @@ function saveOptions(event) {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    ["streams", "videos", "sound", "select", "volume"].forEach((key) => {
-        elements[key].onchange = saveOptions;
-    });
-
     browser.storage.local.get(["notifStreams", "notifVideos", "playSound", "selectedSound", "volume"]).then(result => {
         elements.streams.checked = result.notifStreams !== "no";
         elements.videos.checked = result.notifVideos !== "no";
         elements.sound.checked = result.playSound !== "no";
         elements.volume.value = result.volume;
 
-        params.sounds.forEach((el, key) => {
+        sounds.forEach((el, key) => {
             let opt = document.createElement("option");
             opt.value = key;
             opt.innerHTML = el.name;
@@ -46,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         elements.testSound.onclick = () => {
             let selectedSound = elements.select.options[elements.select.selectedIndex].value;
-            let player = params.sounds[selectedSound].player;
+            let player = sounds[selectedSound].player;
 
             player.volume = elements.volume.value;
             player.play();
@@ -56,5 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 elements.options.addEventListener("submit", event => {
     saveOptions(event);
-    browser.runtime.reload();
+    browser.storage.local.set({ silentReload: "yes" })
+        .then(() => {
+            browser.runtime.reload();
+            setTimeout(window.close, 300);
+        });
 });

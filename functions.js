@@ -1,113 +1,15 @@
-/**
- * Get some YouTube data from the api
- * @param {string} channelID YouTube channel ID
- * @param {Function} callback Callback about a stream and videos
- */
-function getYTData(channelID, callback) {
-    fetch(`https://livenotif-api.glitch.me/YouTube?channelid=${channelID}`)
-        .then(resp => resp.json())
-        .then(resp => {
-            if (resp.stream && resp.videos) callback(resp.stream, resp.videos);
-        });
-}
+var send = (socket, data) => socket.send(JSON.stringify(data));
 
-/**
- * Get some Twitch data from the api
- * @param {string} channelID YouTube channel ID
- * @param {Function} callback Callback data about a stream
- */
-function getTWData(channelID, callback) {
-    fetch(`https://livenotif-api.glitch.me/Twitch?channelid=${channelID}`)
-        .then(resp => resp.json())
-        .then(resp => {
-            if (resp.stream) callback(resp.stream);
-        });
-}
-
-/**
- * Compare videos and lastVideosID and returns new videos.
- * @param {Array} videos Array of videos
- * @param {Array} lastVideosID Array of videos id (should be the same length as videos or 0)
- * @param {Function} callback Callback new videos; array of ID of all videos from initial "videos"
- */
-function checkNewVideos(videos, lastVideosID, callback) {
-    const newlastVideosID = videos.map(video => video.id);
-    if (!lastVideosID || lastVideosID.length === 0) return callback(videos, newlastVideosID, true);
-
-    const newVideos = videos.filter(video => lastVideosID.indexOf(video.id) === -1);
-    return callback(newVideos, newlastVideosID);
-}
-
-/**
- * Send a notification
- * @param {"live" | "1video" | "videos"} eventType For what event  
- * @param {string} iconUrl URL of the image displayed with the notif
- * @param {string} eventDesc Small text about the event (such as Title of a video) 
- * @param {string} redirectUrl URL to which the user will be redirected
- * @param {boolean} playSound Should the notification play a sound
- */
-function sendNotif(eventType, iconUrl, eventDesc, url) {
-    let notif = {
-        type: "basic",
-        message: params.name + " ",
-        iconUrl,
-    };
-
-    switch (eventType) {
-        case "live":
-            notif.title = `${params.name} - LIVE`;
-            notif.message += `est en live !\n>> ${eventDesc}`;
-            break;
-        case "1video":
-            notif.title = `${params.name} - VIDEO`;
-            notif.message += `a sorti une nouvelle vidéo !\n>> ${eventDesc}`;
-            break;
-        case "videos":
-            notif.title = `${params.name} - VIDEOS`;
-            notif.message += "a sorti de nouvelles vidéos sur sa chaîne YouTube !";
-            break;
-    }
-
-    if (params.software === "firefox") {
-        notif.message += "\nCliquez sur la notification pour regarder.";
-    }
-
-    browser.notifications.create(notif).then(createdId => {
-        if (tmp.playSound && params.sounds[tmp.selectedSound]) {
-            let player = params.sounds[tmp.selectedSound].player;
-            player.volume = tmp.volume;
-            player.play();
-        }
-
-        browser.notifications.onClicked.addListener((clickedId) => {
-            if (clickedId === createdId) {
-                browser.notifications.clear(clickedId);
-                browser.tabs.create({ url });
-            }
-        });
-    });
-}
-
-/**
- * Change the icon and the title of the button
- * @param {"online" | "offline" | "custom"} status Presets
- */
-function setStatus(status = "offline", customIcon = "", customTitle = "") {
+var setStatus = (status) => {
     let icon, title;
     switch (status) {
         case "online":
-            tmp.onAir = true;
             icon = "assets/icons/on/48.png";
-            title = `${params.name} est en live ! Cliquez pour y accéder.`;
+            title = `${config.displayName} est en live ! Cliquez pour plus d'informations.`;
             break;
         case "offline":
-            tmp.onAir = false;
             icon = "assets/icons/off/48.png";
-            title = `${params.name} est hors-ligne ! Cliquez pour accéder à sa chaîne.`;
-            break;
-        default:
-            icon = customIcon;
-            title = customTitle;
+            title = `${config.displayName} est hors-ligne ! Cliquez pour plus d'informations.`;
             break;
     }
 
@@ -115,23 +17,84 @@ function setStatus(status = "offline", customIcon = "", customTitle = "") {
     browser.browserAction.setTitle({ title });
 }
 
-/**
- * Test if an object is empty 
- * @param {object} obj The object to test
- */
-function isEmpty(obj) {
-    for (let x in obj) { return false; }
-    return true;
+
+var sendNotif = (event, url, eventDesc = "", title = "") => {
+    let notif = {
+        type: "basic",
+        title: `${config.displayName} - `,
+        message: `${config.displayName} `,
+        iconUrl: "assets/icons/on/128.png",
+    };
+
+    switch (event) {
+        case "stream":
+            notif.title += "LIVE";
+            notif.message += `est en live !\n> ${eventDesc}`;
+            break;
+        case "1video":
+            notif.title += "VIDEO";
+            notif.message += `a sorti une nouvelle vidéo !\n> ${eventDesc}`;
+            break;
+        case "videos":
+            notif.title += "VIDEOS";
+            notif.message += "a sorti de nouvelles vidéos sur sa chaîne YouTube !";
+            break;
+        case "custom":
+            notif.title = title;
+            notif.message = eventDesc;
+            break;
+    };
+
+    browser.notifications.create(notif).then(createdId => {
+        if (config.playSound && sounds[config.selectedSound]) {
+            let player = sounds[config.selectedSound].player;
+            player.volume = config.volume;
+            player.play();
+        }
+
+        browser.notifications.onClicked.addListener((clickedId) => {
+            if (clickedId === createdId) {
+                browser.notifications.clear(clickedId);
+                if (url) { browser.tabs.create({ url }); }
+            }
+        });
+    });
 }
 
-/**
- * Returns useful vars from background page
- * Use this in options or popup
- */
-function getUsefulVars() {
-    return { tmp, params };
+var StreamHandler = (stream, origin, lastStreamId) => {
+    currentStream = stream;
+    currentStream.origin = origin;
+    setStatus("online");
+
+    let streamId = origin === "youtube" ? stream.id.videoId : stream.id;
+    let streamTitle = origin === "youtube" ? stream.snippet.title : stream.title;
+    let streamUrl = origin === "youtube" ? `https://youtu.be/${streamId}` : `https://twitch.tv/${config.IDs.twitch}`
+
+    if (streamId !== lastStreamId) {
+        browser.storage.local.set({ lastStreamId: streamId });
+
+        if (config.announceStreams) {
+            sendNotif("stream", streamUrl, streamTitle);
+        }
+    };
 }
 
-function capsFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+var VideosHandler = (videos) => {
+    browser.storage.local.get("lastVideosId").then((res) => {
+        browser.storage.local.set({ lastVideosId: videos.map(video => video.snippet.resourceId.videoId) });
+
+        if (res.lastVideosId instanceof Array) {
+            let newVideos = videos.filter(video => res.lastVideosId.indexOf(video.snippet.resourceId.videoId) === -1);
+
+            if (newVideos.length >= 10 || newVideos.length <= 0) {
+                return;
+            } else if (newVideos.length === 1) {
+                let newVideo = newVideos.shift();
+                sendNotif("1video", `https://youtu.be/${newVideo.snippet.resourceId.videoId}`, newVideo.snippet.title);
+            } else {
+                sendNotif("videos", `https://youtube.com/channel/${config.IDs.youtube}/videos`);
+            }
+        };
+    });
+
 }
