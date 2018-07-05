@@ -1,16 +1,16 @@
-var send = (socket, data) => socket.send(JSON.stringify(data));
+const send = (socket, data) => socket.send(JSON.stringify(data));
 
-var blink = () => {
+const blink = () => {
     browser.browserAction.setIcon({ path: icon = `assets/icons/off/48.png` });
     setTimeout(() => {
         if (Object.keys(currentStream).length < 1) return;
 
         browser.browserAction.setIcon({ path: icon = `assets/icons/on/48.png` });
-        if (!dontBlink) setTimeout(blink, 500);
-    }, 500);
+        if (!dontBlink) setTimeout(blink, 450);
+    }, 350);
 };
 
-var setStatus = (status) => {
+const setStatus = (status) => {
     let icon, title;
     switch (status) {
         case "online":
@@ -27,10 +27,10 @@ var setStatus = (status) => {
     browser.browserAction.setTitle({ title });
 }
 
-var sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) => {
+const sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) => {
     let notif = {
         type: "basic",
-        title: `${config.displayName} - `,
+        title: "",
         message: "",
         iconUrl: "assets/icons/on/128.png",
     };
@@ -40,19 +40,19 @@ var sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) => 
             notif.title += "Stream";
 
             if (config.software === "firefox") notif.message += `${config.displayName} est en streaming sur ${origin === "youtube" ? "YouTube" : "Twitch"}:\n${eventDesc}\n\nEn live depuis ${timeago().format(eventStartTime, "fr_FR")}.`;
-            else notif.message += `est en stream !\n> ${eventDesc}`;
+            else notif.message += `${config.displayName} est en stream !\n> ${eventDesc}`;
             break;
         case "1video":
             notif.title += "Vidéo";
 
-            if (config.software === "firefox") notif.message += `Nouvelle vidéo disponible sur la chaîne YouTube de ${config.displayName}:\n${eventDesc}\n\nEn ligne depuis ${timeago().format(eventStartTime, "fr_FR")}.`;
-            else notif.message += `a sorti une nouvelle vidéo !\n> ${eventDesc}`;
+            if (config.software === "firefox") notif.message += `Une nouvelle vidéo est disponible sur la chaîne YouTube de ${config.displayName}:\n${eventDesc}\nEn ligne depuis ${timeago().format(eventStartTime, "fr_FR")}.`;
+            else notif.message += `${config.displayName} a sorti une nouvelle vidéo !\n> ${eventDesc}`;
             break;
         case "videos":
             notif.title += "Vidéos";
 
             if (config.software === "firefox") notif.message += `De nouvelles vidéos sont disponibles sur la chaîne YouTube de ${config.displayName}.\n\nCliquez ici pour visiter la chaîne.`;
-            else notif.message += "a sorti de nouvelles vidéos sur sa chaîne YouTube !";
+            else notif.message += `${config.displayName} a sorti de nouvelles vidéos sur sa chaîne YouTube !`;
             break;
         case "custom":
             notif.title = title;
@@ -77,7 +77,7 @@ var sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) => 
     });
 }
 
-var StreamHandler = (stream, origin, lastStreamId) => {
+const StreamHandler = (stream, origin, lastStreamId) => {
     currentStream = stream;
     currentStream.origin = origin;
     setStatus("online");
@@ -98,7 +98,7 @@ var StreamHandler = (stream, origin, lastStreamId) => {
     };
 }
 
-var VideosHandler = (videos) => {
+const VideosHandler = (videos) => {
     browser.storage.local.get("lastVideosId").then((res) => {
         browser.storage.local.set({ lastVideosId: videos.map(video => video.snippet.resourceId.videoId) });
 

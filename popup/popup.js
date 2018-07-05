@@ -1,5 +1,6 @@
-const { currentStream, config } = browser.extension.getBackgroundPage();
-const onAir = Object.keys(currentStream).length > 0;
+const bg = browser.extension.getBackgroundPage();
+const onAir = Object.keys(bg.currentStream).length > 0;
+bg.dontBlink = true;
 
 timeago.register("fr_FR", (number, index) => {
     return [
@@ -21,11 +22,11 @@ timeago.register("fr_FR", (number, index) => {
 });
 
 if (onAir) {
-    let popupTitle = document.createTextNode(config.displayName + " est en live!");
-    let streamId = currentStream.origin === "youtube" ? currentStream.id.videoId : currentStream.id;
-    let streamTitle = currentStream.origin === "youtube" ? currentStream.snippet.title : currentStream.title;
-    let streamUrl = currentStream.origin === "youtube" ? `https://youtu.be/${streamId}` : `https://twitch.tv/${config.IDs.twitch}`;
-    let streamStart = new Date(currentStream.origin === "youtube" ? currentStream.snippet.publishedAt : currentStream.started_at);
+    let popupTitle = document.createTextNode(bg.config.displayName + " est en live!");
+    let streamId = bg.currentStream.origin === "youtube" ? bg.currentStream.id.videoId : bg.currentStream.id;
+    let streamTitle = bg.currentStream.origin === "youtube" ? bg.currentStream.snippet.title : bg.currentStream.title;
+    let streamUrl = bg.currentStream.origin === "youtube" ? `https://youtu.be/${streamId}` : `https://twitch.tv/${bg.config.IDs.twitch}`;
+    let streamStart = new Date(bg.currentStream.origin === "youtube" ? bg.currentStream.snippet.publishedAt : bg.currentStream.started_at);
 
     document.getElementById("title").appendChild(popupTitle);
     document.getElementById("game").appendChild(document.createTextNode(streamTitle));
@@ -36,7 +37,7 @@ if (onAir) {
 let todelete = document.getElementById(onAir ? "is-offline" : "is-online");
 todelete.parentNode.removeChild(todelete);
 
-const socials = config.socials;
+const socials = bg.config.socials;
 Object.keys(socials).forEach((key) => {
     let link = socials[key];
 

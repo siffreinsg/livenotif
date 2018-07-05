@@ -1,9 +1,8 @@
-var socketUrl = "ws://localhost";
+const socketUrl = "ws://localhost";
 
 var config = {
     software: "chrome",
     sound: 0,
-    wsUrl: null,
     announceStreams: true,
     announceVideos: true,
     playSound: true,
@@ -11,7 +10,7 @@ var config = {
     id: "rocketbeanstv",
 };
 
-var sounds = [
+const sounds = [
     { name: "Par défaut (Ding)", player: new Audio("assets/sounds/ding.ogg") },
     { name: "Yamete", player: new Audio("assets/sounds/yamete.ogg") },
     { name: "Chèvre", player: new Audio("assets/sounds/chevre.mp3") },
