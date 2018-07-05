@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../assets/css/options.css">
+</head>
+
+<body>
+    <fieldset>
+        <legend>
+            <b>Réglage des notifications</b>
+        </legend>
+
+        <label class="form-switch">
+            <input type="checkbox" id="streamsNotif">
+            <i></i>
+            <em>Annonce des streams</em>
+        </label>
+        <br>
+
+        <label class="form-switch">
+            <input type="checkbox" id="videosNotif">
+            <i></i>
+            <em>Annonce des vidéos</em>
+        </label>
+        <br>
+
+        <label class="form-switch">
+            <input type="checkbox" id="playSound">
+            <i></i>
+            <em>Jouer un son</em>
+        </label>
+        <br>
+
+        <label class="form-switch">
+            <input type="checkbox" id="blinkingIcon">
+            <i></i>
+            <em>Icône clignotante</em>
+        </label>
+        <br>
+
+        <label class="form-switch">
+            <select name="soundSelect" id="soundSelect"></select>
+            <em>Son des notifications</em>
+        </label>
+        <br>
+
+        <label class="form-input">
+            <input type="range" step="0.1" min="0" max="1" id="soundVolume"></input>
+            <em>Volume des notifications</em>
+        </label>
+        <br>
+
+        <span>
+            <button type="submit" id="save">Sauvegarder</button>
+            <button type="button" id="testSound">Tester le son</button>
+        </span>
+    </fieldset>
+    <script src="../assets/js/browser-polyfill.min.js"></script>
+    <script src="../assets/js/options.js"></script>
+</body>
+
+</html>

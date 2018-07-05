@@ -11,7 +11,7 @@
             "48": "assets/icons/off/48.png",
             "128": "assets/icons/off/128.png"
         },
-        "default_popup": "popup/popup.html"
+        "default_popup": "views/popup.html"
     },
     "icons": {
         "16": "assets/icons/on/16.png",
@@ -20,12 +20,12 @@
         "128": "assets/icons/on/128.png"
     },
     "options_ui": {
-        "page": "options/options.html"
+        "page": "views/options.html"
     },
     "background": {
         "scripts": [
             "assets/js/browser-polyfill.min.js",
-            "assets/js/timeago/timeago.min.js",
+            "assets/js/timeago.min.js",
             "init.js",
             "functions.js",
             "events.js",

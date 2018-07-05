@@ -22,13 +22,12 @@ timeago.register("fr_FR", (number, index) => {
 });
 
 if (onAir) {
-    let popupTitle = document.createTextNode(bg.config.displayName + " est en live!");
     let streamId = bg.currentStream.origin === "youtube" ? bg.currentStream.id.videoId : bg.currentStream.id;
     let streamTitle = bg.currentStream.origin === "youtube" ? bg.currentStream.snippet.title : bg.currentStream.title;
-    let streamUrl = bg.currentStream.origin === "youtube" ? `https://youtu.be/${streamId}` : `https://twitch.tv/${bg.config.IDs.twitch}`;
     let streamStart = new Date(bg.currentStream.origin === "youtube" ? bg.currentStream.snippet.publishedAt : bg.currentStream.started_at);
+    let streamUrl = bg.currentStream.origin === "youtube" ? `https://youtu.be/${streamId}` : `https://twitch.tv/${bg.config.IDs.twitch}`;
 
-    document.getElementById("title").appendChild(popupTitle);
+    document.getElementById("title").appendChild(document.createTextNode(bg.config.displayName + " est en live!"));
     document.getElementById("game").appendChild(document.createTextNode(streamTitle));
     document.getElementById("since").appendChild(document.createTextNode(timeago().format(streamStart, "fr_FR")));
     document.getElementById("url").href = streamUrl;
@@ -37,9 +36,8 @@ if (onAir) {
 let todelete = document.getElementById(onAir ? "is-offline" : "is-online");
 todelete.parentNode.removeChild(todelete);
 
-const socials = bg.config.socials;
-Object.keys(socials).forEach((key) => {
-    let link = socials[key];
+Object.keys(bg.config.socials).forEach((key) => {
+    let link = bg.config.socials[key];
 
     if (link.length < 1) {
         let todelete = document.getElementById(key);

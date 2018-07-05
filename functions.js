@@ -37,19 +37,19 @@ const sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) =
 
     switch (event) {
         case "stream":
-            notif.title += "Stream";
+            notif.title += "Stream en cours";
 
-            if (config.software === "firefox") notif.message += `${config.displayName} est en streaming sur ${origin === "youtube" ? "YouTube" : "Twitch"}:\n${eventDesc}\n\nEn live depuis ${timeago().format(eventStartTime, "fr_FR")}.`;
-            else notif.message += `${config.displayName} est en stream !\n> ${eventDesc}`;
+            if (config.software === "firefox") notif.message += `${config.displayName} est en streaming sur ${origin === "youtube" ? "YouTube" : "Twitch"}:\n${eventDesc}\nEn live depuis ${timeago().format(eventStartTime, "fr_FR")}.`;
+            else notif.message += `${config.displayName} est en stream !\n"${eventDesc}"`;
             break;
         case "1video":
-            notif.title += "Vidéo";
+            notif.title += "Nouvelle vidéo";
 
             if (config.software === "firefox") notif.message += `Une nouvelle vidéo est disponible sur la chaîne YouTube de ${config.displayName}:\n${eventDesc}\nEn ligne depuis ${timeago().format(eventStartTime, "fr_FR")}.`;
             else notif.message += `${config.displayName} a sorti une nouvelle vidéo !\n> ${eventDesc}`;
             break;
         case "videos":
-            notif.title += "Vidéos";
+            notif.title += "Nouvelles vidéos";
 
             if (config.software === "firefox") notif.message += `De nouvelles vidéos sont disponibles sur la chaîne YouTube de ${config.displayName}.\n\nCliquez ici pour visiter la chaîne.`;
             else notif.message += `${config.displayName} a sorti de nouvelles vidéos sur sa chaîne YouTube !`;
@@ -60,13 +60,13 @@ const sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) =
             break;
     };
 
-    browser.notifications.create(notif).then(createdId => {
-        if (config.playSound && sounds[config.selectedSound]) {
-            let player = sounds[config.selectedSound].player;
-            player.volume = config.volume;
-            player.play();
-        }
+    if (config.playSound && sounds[config.selectedSound]) {
+        let player = sounds[config.selectedSound].player;
+        player.volume = config.volume;
+        player.play();
+    }
 
+    browser.notifications.create(notif).then(createdId => {
         browser.notifications.onClicked.addListener((clickedId) => {
             if (clickedId === createdId) {
                 dontBlink = true;
@@ -91,8 +91,10 @@ const StreamHandler = (stream, origin, lastStreamId) => {
         browser.storage.local.set({ lastStreamId: streamId });
 
         if (config.announceStreams) {
-            dontBlink = false;
-            blink();
+            if (config.blinkingIcon) {
+                dontBlink = false;
+                blink();
+            }
             sendNotif({ event: "stream", url: streamUrl, eventDesc: streamTitle, eventStartTime: streamStart });
         }
     };
