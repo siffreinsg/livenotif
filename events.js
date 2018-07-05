@@ -28,3 +28,5 @@ browser.runtime.onInstalled.addListener(details => {
         }
     });
 });
+
+browser.browserAction.onClicked.addListener(() => { dontBlink = true; });

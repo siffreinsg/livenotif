@@ -35,7 +35,6 @@
     "permissions": [
         "https://i.ytimg.com/*",
         "https://static-cdn.jtvnw.net/*",
-        "http://locahost/*",
         "notifications",
         "storage"
     ],

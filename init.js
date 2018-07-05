@@ -1,15 +1,14 @@
 var socketUrl = "ws://localhost";
 
-var currentStream = {};
-
 var config = {
-    software: "firefox",
+    software: "chrome",
     sound: 0,
+    wsUrl: null,
     announceStreams: true,
     announceVideos: true,
     playSound: true,
     volume: 0.5,
-    id: "rocketbeanstv"
+    id: "rocketbeanstv",
 };
 
 var sounds = [
@@ -19,6 +18,9 @@ var sounds = [
     { name: "Cri viril", player: new Audio("assets/sounds/cri_bri.wav") }
 ]
 
+var currentStream = {};
+var dontBlink = false;
+
 browser.storage.local.get(["notifStreams", "notifVideos", "playSound", "selectedSound", "volume"]).then((res) => {
     config.announceStreams = res.notifStreams !== "no";
     config.announceVideos = res.notifVideos !== "no";
@@ -27,7 +29,7 @@ browser.storage.local.get(["notifStreams", "notifVideos", "playSound", "selected
     config.volume = parseInt("" + res.volume) || 0.5;
 });
 
-timeago.register("fr_FR", (number, index) => {
+timeago.register("fr_FR", (_, index) => {
     return [
         ["depuis quelques secondes", "dans quelques secondes"],
         ["depuis %s secondes", "dans %s secondes"],

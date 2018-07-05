@@ -1,22 +1,17 @@
-setStatus("offline");
 var socket = new WebSocket(socketUrl);
-
-socket.onclose = () => {
-    console.log("[WS] Connection lost. Reconnecting in 3 minutes...");
-    setTimeout(() => {
-        browser.storage.local.set({ silentReload: "yes" }).then(() => browser.runtime.reload());
-    }, 180000);
-};
 
 socket.onerror = (ex) => console.error("[WS] Error while trying to connect.", ex);
 
+socket.onclose = () => {
+    console.log("[WS] Connection lost. Reconnecting in 5 minutes...");
+    setTimeout(() => {
+        browser.storage.local.set({ silentReload: "yes" }).then(() => browser.runtime.reload());
+    }, 300000);
+};
+
 socket.onopen = () => {
     console.log("[WS] Connected.");
-
-    send(socket, {
-        request: "ADDON_CONFIG",
-        channel: config.id,
-    });
+    send(socket, { request: "ADDON_CONFIG", channel: config.id });
 };
 
 socket.onmessage = (event) => {
@@ -36,10 +31,8 @@ socket.onmessage = (event) => {
                     config = { ...config, ...data.config };
                     console.log("[WS] Config saved!", config);
 
-                    send(socket, {
-                        request: "CURRENT_ACTIVITY",
-                        channel: config.id,
-                    });
+                    setStatus("offline");
+                    send(socket, { request: "CURRENT_ACTIVITY", channel: config.id });
                 };
                 break;
             case "YOUTUBE_STREAM_START":
@@ -67,6 +60,8 @@ socket.onmessage = (event) => {
                     sendNotif({ event: "custom", url: data.notif.url, eventDesc: data.notif.message, title: data.notif.title });
                 };
                 break;
-        }
+        };
+    } else {
+        console.log("[WS] Received unknown message:", data);
     }
-}
+};

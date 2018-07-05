@@ -1,5 +1,15 @@
 var send = (socket, data) => socket.send(JSON.stringify(data));
 
+var blink = () => {
+    browser.browserAction.setIcon({ path: icon = `assets/icons/off/48.png` });
+    setTimeout(() => {
+        if (Object.keys(currentStream).length < 1) return;
+
+        browser.browserAction.setIcon({ path: icon = `assets/icons/on/48.png` });
+        if (!dontBlink) setTimeout(blink, 500);
+    }, 500);
+};
+
 var setStatus = (status) => {
     let icon, title;
     switch (status) {
@@ -16,7 +26,6 @@ var setStatus = (status) => {
     browser.browserAction.setIcon({ path: icon });
     browser.browserAction.setTitle({ title });
 }
-
 
 var sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) => {
     let notif = {
@@ -60,6 +69,7 @@ var sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) => 
 
         browser.notifications.onClicked.addListener((clickedId) => {
             if (clickedId === createdId) {
+                dontBlink = true;
                 browser.notifications.clear(clickedId);
                 if (url) { browser.tabs.create({ url }); }
             }
@@ -81,6 +91,8 @@ var StreamHandler = (stream, origin, lastStreamId) => {
         browser.storage.local.set({ lastStreamId: streamId });
 
         if (config.announceStreams) {
+            dontBlink = false;
+            blink();
             sendNotif({ event: "stream", url: streamUrl, eventDesc: streamTitle, eventStartTime: streamStart });
         }
     };
