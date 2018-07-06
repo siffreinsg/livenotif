@@ -1,4 +1,6 @@
-const socketUrl = "ws://localhost";
+const socketsUrl = [
+    "ws://localhost"
+];
 
 var config = {
     software: "chrome",

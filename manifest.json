@@ -1,10 +1,10 @@
 {
-    "name": "[Name] en live",
+    "name": "LiveNotif - [Name]",
     "short_name": "[Name]",
-    "description": "Envoie une notification quand [Name] est en live.",
-    "version": "4.0.0",
+    "description": "Envoie une notification quand [Name] est en live ou sort une vidéo.",
+    "version": "3.2.0",
     "browser_action": {
-        "default_title": "[Name] est hors-ligne !",
+        "default_title": "[Name] est hors-ligne.",
         "default_icon": {
             "16": "assets/icons/off/16.png",
             "32": "assets/icons/off/32.png",

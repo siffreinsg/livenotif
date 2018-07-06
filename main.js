@@ -1,12 +1,12 @@
-var socket = new WebSocket(socketUrl);
+var socket = new WebSocket(socketsUrl[Math.floor(Math.random() * socketsUrl.length)]);
 
 socket.onerror = (ex) => console.error("[WS] Error while trying to connect.", ex);
 
 socket.onclose = () => {
-    console.log("[WS] Connection lost. Reconnecting in 5 minutes...");
+    console.log("[WS] Connection lost. Reconnecting in 3 minutes...");
     setTimeout(() => {
         browser.storage.local.set({ silentReload: "yes" }).then(() => browser.runtime.reload());
-    }, 300000);
+    }, 180 * 1000);
 };
 
 socket.onopen = () => {
