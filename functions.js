@@ -27,7 +27,7 @@ const setStatus = (status) => {
     browser.browserAction.setTitle({ title });
 }
 
-const sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) => {
+const sendNotif = ({ event, url, eventStartTime, eventDesc = "", eventTitle = "", playSound = true }) => {
     let notif = {
         type: "basic",
         title: "",
@@ -55,12 +55,12 @@ const sendNotif = ({ event, url, eventStartTime, eventDesc = "", title = "" }) =
             else notif.message += `${config.displayName} a sorti de nouvelles vidéos sur sa chaîne YouTube !`;
             break;
         case "custom":
-            notif.title = title;
+            notif.title = eventTitle;
             notif.message = eventDesc;
             break;
     };
 
-    if (config.playSound && sounds[config.selectedSound]) {
+    if (playSound && config.playSound && sounds[config.selectedSound]) {
         let player = sounds[config.selectedSound].player;
         player.volume = config.volume;
         player.play();

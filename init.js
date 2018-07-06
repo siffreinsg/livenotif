@@ -9,6 +9,7 @@ var config = {
     announceVideos: true,
     playSound: true,
     blinkingIcon: true,
+    devMode: false,
     volume: 0.5,
     id: "rocketbeanstv",
 };
@@ -23,13 +24,14 @@ var sounds = [
 var currentStream = {};
 var dontBlink = false;
 
-browser.storage.local.get(["notifStreams", "notifVideos", "playSound", "blinkingIcon", "selectedSound", "volume"]).then((res) => {
+browser.storage.local.get(["notifStreams", "notifVideos", "playSound", "blinkingIcon", "selectedSound", "volume", "devMode"]).then((res) => {
     config.announceStreams = res.notifStreams !== "no";
     config.announceVideos = res.notifVideos !== "no";
     config.playSound = res.playSound !== "no";
     config.blinkingIcon = res.blinkingIcon !== "no";
     config.selectedSound = parseInt("" + res.selectedSound) || 0;
     config.volume = parseInt("" + res.volume) || 0.5;
+    config.devMode = res.devMode === "yes";
 });
 
 timeago.register("fr_FR", (_, i) => [

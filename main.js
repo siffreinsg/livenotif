@@ -2,14 +2,22 @@ var socket = new WebSocket(socketsUrl[Math.floor(Math.random() * socketsUrl.leng
 
 socket.onerror = (ex) => console.error("[WS] Error while trying to connect.", ex);
 
-socket.onclose = () => {
-    console.log("[WS] Connection lost. Reconnecting in 3 minutes...");
+socket.onclose = (event) => {
+    console.log("[WS] Connection lost. Reconnecting in 3 minutes...", event);
+
+    if (config.devMode) {
+        sendNotif({ event: "custom", eventTitle: "Déconnecté du WebSocket", eventDesc: `CODE > ${event.code}\nURL > ${event.currentTarget.url}` })
+    }
+
     setTimeout(() => {
         browser.storage.local.set({ silentReload: "yes" }).then(() => browser.runtime.reload());
     }, 180 * 1000);
 };
 
-socket.onopen = () => {
+socket.onopen = (ev) => {
+    if (config.devMode) {
+        sendNotif({ event: "custom", eventTitle: "Connecté au WebSocket", eventDesc: `URL: ${ev.currentTarget.url}` })
+    }
     console.log("[WS] Connected.");
     send(socket, { request: "ADDON_CONFIG", channel: config.id });
 };
@@ -57,7 +65,7 @@ socket.onmessage = (event) => {
             case "CUSTOM_NOTIF":
                 if (data.channel && data.channel !== config.channel) return;
                 if (data.notif && data.notif.title && data.notif.message) {
-                    sendNotif({ event: "custom", url: data.notif.url, eventDesc: data.notif.message, title: data.notif.title });
+                    sendNotif({ event: "custom", url: data.notif.url, eventDesc: data.notif.message, eventTitle: data.notif.title });
                 };
                 break;
         };

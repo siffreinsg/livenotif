@@ -1,6 +1,6 @@
 browser.runtime.onInstalled.addListener(details => {
     let name = config.id[0].toUpperCase() + config.id.substring(1);
-    let title = `${name} - LiveNotif`;
+    let eventTitle = `${name} - LiveNotif`;
     let message = "";
 
     switch (details.reason) {
@@ -22,7 +22,7 @@ browser.runtime.onInstalled.addListener(details => {
 
     browser.storage.local.get("silentReload").then((res) => {
         if (res.silentReload !== "yes") {
-            sendNotif({ event: "custom", url: "https://github.com/siffreinsg/livenotif/releases/latest", title, eventDesc: message });
+            sendNotif({ event: "custom", url: "https://github.com/siffreinsg/livenotif/releases/latest", eventTitle, eventDesc: message });
         } else {
             browser.storage.local.set({ silentReload: "no" });
         }
