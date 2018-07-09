@@ -1,6 +1,4 @@
-const socketsUrl = [
-    "ws://localhost"
-];
+const socketsUrl = ["ws://nocloudflare.livenotif.cf:7777"];
 
 var config = {
     software: "chrome",
@@ -11,7 +9,7 @@ var config = {
     blinkingIcon: true,
     devMode: false,
     volume: 0.5,
-    id: "rocketbeanstv",
+    id: "superbrioche",
 };
 
 var sounds = [

@@ -102,20 +102,18 @@ const StreamHandler = (stream, origin, lastStreamId) => {
 
 const VideosHandler = (videos) => {
     browser.storage.local.get("lastVideosId").then((res) => {
-        browser.storage.local.set({ lastVideosId: videos.map(video => video.snippet.resourceId.videoId) });
-
         if (res.lastVideosId instanceof Array) {
-            let newVideos = videos.filter(video => res.lastVideosId.indexOf(video.snippet.resourceId.videoId) === -1);
+            const newVideos = videos.filter(video => res.lastVideosId.indexOf(video.snippet.resourceId.videoId) === -1);
 
-            if (newVideos.length >= 10 || newVideos.length <= 0) {
-                return;
-            } else if (newVideos.length === 1) {
-                let newVideo = newVideos.shift();
+            if (newVideos.length === 1) {
+                const newVideo = newVideos[0];
                 sendNotif({ event: "1video", url: `https://youtu.be/${newVideo.snippet.resourceId.videoId}`, eventDesc: newVideo.snippet.title, eventStartTime: newVideo.snippet.publishedAt });
-            } else {
+            } else if (newVideos.length > 0 || newVideos.length < 10) {
                 sendNotif({ event: "videos", url: `https://youtube.com/channel/${config.IDs.youtube}/videos` });
             }
         };
+
+        browser.storage.local.set({ lastVideosId: videos.map(video => video.snippet.resourceId.videoId) });
     });
 
 }

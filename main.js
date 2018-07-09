@@ -54,10 +54,12 @@ socket.onmessage = (event) => {
             case "TWITCH_STREAM_END":
                 if (data.channel && data.channel === config.id) {
                     currentStream = {};
+                    dontBlink = true;
                     setStatus("offline");
                 };
                 break;
             case "YOUTUBE_NEW_VIDEOS":
+                console.log("Event data:", data);
                 if (config.announceVideos && data.channel && data.channel === config.id && data.videos) {
                     VideosHandler(data.videos);
                 };
