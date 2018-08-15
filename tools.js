@@ -1,4 +1,4 @@
-function loadUserConfig(appConfig) {
+function loadUserConfig() {
     return new Promise((resolve, reject) => {
         let userConfig = {};
 
@@ -10,10 +10,8 @@ function loadUserConfig(appConfig) {
 
                 if (res.playSound !== "no") {
                     const selectedSound = parseInt("" + res.selectedSound) || 0;
-                    const soundPath = appConfig.sounds[selectedSound].path;
-                    const soundPlayer = new Audio(soundPath);
+                    const soundPlayer = (new Audio(config.sounds[selectedSound])).player;
                     soundPlayer.volume = parseInt("" + res.volume) || 0.5;
-
                     userConfig.soundPlayer = soundPlayer;
                 }
 
@@ -28,29 +26,28 @@ function silentReload() {
 }
 
 function extractMessageFromEvent(event) {
-    let data;
-    try {
-        data = JSON.parse(event.data);
-    } catch (ex) {
-        return undefined;
-    }
+    return new Promise((resolve, reject) => {
+        let data;
+        try {
+            data = JSON.parse(event.data);
+        } catch (ex) {
+            return reject();
+        }
 
-    if (typeof data.event === "undefined" || (data.channel !== config.id && data.channel !== "ALL_CHANNELS")) {
-        return undefined;
-    }
-
-    return data;
+        if (typeof data.event === "undefined" || typeof data.channel === "undefined") return reject();
+        if (data.channel === config.id || data.channel === "ALL_CHANNELS") return resolve(data);
+    })
 }
 
 function setStatus(status) {
     let icon, title;
     switch (status) {
         case "online":
-            icon = "assets/icons/on/48.png";
+            icon = manifest.icons[48];
             title = `${config.displayName} est en live ! Cliquez pour plus d'informations.`;
             break;
         case "offline":
-            icon = "assets/icons/off/48.png";
+            icon = manifest.browser_action.default_icon[48];
             title = `${config.displayName} est hors-ligne ! Cliquez pour plus d'informations.`;
             break;
     }
@@ -59,41 +56,25 @@ function setStatus(status) {
     browser.browserAction.setTitle({ title });
 }
 
-function blink() {
-    browser.browserAction.setIcon({ path: icon = `assets/icons/off/48.png` });
-    setTimeout(() => {
-        if (Object.keys(currentEvent).length < 1) return;
-
-        browser.browserAction.setIcon({ path: icon = `assets/icons/on/48.png` });
-        if (!dontBlink) setTimeout(blink, 450);
-    }, 350);
-};
-
 function sendNotif(title, body, url, playSound = true) {
-    console.log("Sending notification.");
-
     let notif = {
         type: "basic",
         title: title,
         message: body,
-        iconUrl: "assets/icons/on/128.png"
+        iconUrl: manifest.icons[128]
     };
 
     if (playSound && config.soundPlayer) {
-        console.log("Playing sound.");
         config.soundPlayer.play();
     }
 
     browser.notifications.create(notif)
         .then(createdId => {
-            let notifTimeout = setTimeout(() => browser.notifications.clear(createdId), 10000);
+            setTimeout(() => browser.notifications.clear(clickedId), 10000);
 
             browser.notifications.onClicked.addListener((clickedId) => {
                 if (clickedId === createdId) {
-                    console.log("Notification clicked.");
-
                     dontBlink = true;
-                    clearTimeout(notifTimeout);
                     browser.notifications.clear(clickedId);
 
                     if (url) {

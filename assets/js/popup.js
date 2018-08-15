@@ -1,5 +1,5 @@
 const bg = browser.extension.getBackgroundPage();
-const onAir = Object.keys(bg.currentEvent).length > 0;
+const onAir = Object.keys(bg.currentStream).length > 0;
 bg.dontBlink = true;
 
 timeago.register("fr_FR", (number, index) => {
@@ -21,41 +21,33 @@ timeago.register("fr_FR", (number, index) => {
     ][index];
 });
 
-let isOffline = document.getElementById("is-offline");
-let isNotConnected = document.getElementById("is-not-connected");
-let isOnline = document.getElementById("is-online");
-let footer = document.getElementById("footer");
+if (onAir) {
+    let streamId = bg.currentStream.origin === "youtube" ? bg.currentStream.id.videoId : bg.currentStream.id;
+    let streamTitle = bg.currentStream.origin === "youtube" ? bg.currentStream.snippet.title : bg.currentStream.title;
+    let streamStart = new Date(bg.currentStream.origin === "youtube" ? bg.currentStream.snippet.publishedAt : bg.currentStream.started_at);
+    let streamUrl = bg.currentStream.origin === "youtube" ? `https://youtu.be/${streamId}` : `https://twitch.tv/${bg.config.IDs.twitch}`;
 
-if (!bg.connected) {
-    document.body.removeChild(isOnline);
-    document.body.removeChild(isOffline);
-    document.body.removeChild(footer);
-} else {
-    document.body.removeChild(isNotConnected);
-    document.body.removeChild(onAir ? isOffline : isOnline);
+    document.getElementById("title").appendChild(document.createTextNode(bg.config.displayName + " est en live!"));
+    document.getElementById("game").appendChild(document.createTextNode(streamTitle));
+    document.getElementById("since").appendChild(document.createTextNode(timeago().format(streamStart, "fr_FR")));
+    document.getElementById("url").href = streamUrl;
+}
 
-    if (onAir) {
-        let eventStart = timeago().format(new Date(bg.currentEvent.startedAt), "fr_FR");
+let todelete = document.getElementById(onAir ? "is-offline" : "is-online");
+todelete.parentNode.removeChild(todelete);
 
-        document.getElementById("title").appendChild(document.createTextNode(bg.config.displayName));
-        document.getElementById("game").appendChild(document.createTextNode(bg.currentEvent.title));
-        document.getElementById("since").appendChild(document.createTextNode(eventStart));
-        document.getElementById("url").href = bg.currentEvent.url;
+Object.keys(bg.config.socials).forEach((key) => {
+    let link = bg.config.socials[key];
+
+    if (link.length < 1) {
+        let todelete = document.getElementById(key);
+        todelete.parentNode.removeChild(todelete);
+    } else {
+        document.getElementById("a-" + key).href = link;
     }
+});
 
-    Object.keys(bg.config.socials).forEach((key) => {
-        let link = bg.config.socials[key];
-
-        if (link.length < 1) {
-            let todelete = document.getElementById(key);
-            todelete.parentNode.removeChild(todelete);
-        } else {
-            document.getElementById("a-" + key).href = link;
-        }
-    });
-
-    let footerChilds = document.getElementById("footer").children;
-    for (var i = 0; i < footerChilds.length; i++) {
-        footerChilds[i].style.width = (width = 100.0 / footerChilds.length) + "%";
-    }
+let footerChilds = document.getElementById("footer").children;
+for (var i = 0; i < footerChilds.length; i++) {
+    footerChilds[i].style.width = (width = 100.0 / footerChilds.length) + "%";
 }
