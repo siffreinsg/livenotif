@@ -2,7 +2,7 @@
     "name": "LiveNotif - [Name]",
     "short_name": "[Name]",
     "description": "Envoie une notification quand [Name] est en live ou sort une vidéo.",
-    "version": "4.0.0",
+    "version": "3.2.0",
     "browser_action": {
         "default_title": "[Name] est hors-ligne.",
         "default_icon": {
@@ -10,7 +10,8 @@
             "32": "assets/icons/off/32.png",
             "48": "assets/icons/off/48.png",
             "128": "assets/icons/off/128.png"
-        }
+        },
+        "default_popup": "views/popup.html"
     },
     "icons": {
         "16": "assets/icons/on/16.png",
@@ -18,21 +19,22 @@
         "48": "assets/icons/on/48.png",
         "128": "assets/icons/on/128.png"
     },
+    "options_ui": {
+        "page": "views/options.html"
+    },
     "background": {
         "scripts": [
             "assets/js/browser-polyfill.min.js",
             "assets/js/timeago.min.js",
-            "config.js",
-            "variables.js",
-            "tools.js",
+            "init.js",
+            "functions.js",
             "events.js",
-            "app.js"
+            "main.js"
         ]
     },
     "permissions": [
         "https://i.ytimg.com/*",
         "https://static-cdn.jtvnw.net/*",
-        "https://api.siffreinsigy.me/*",
         "notifications",
         "storage"
     ],

@@ -1,11 +1,11 @@
 const send = (socket, data) => socket.send(JSON.stringify(data));
 
 const blink = () => {
-    browser.browserAction.setIcon({ path: manifest.browser_action.default_icon[48] });
+    browser.browserAction.setIcon({ path: icon = `assets/icons/off/48.png` });
     setTimeout(() => {
         if (Object.keys(currentStream).length < 1) return;
 
-        browser.browserAction.setIcon({ path: icon = manifest.icons[48] });
+        browser.browserAction.setIcon({ path: icon = `assets/icons/on/48.png` });
         if (!dontBlink) setTimeout(blink, 450);
     }, 350);
 };
@@ -14,11 +14,11 @@ const setStatus = (status) => {
     let icon, title;
     switch (status) {
         case "online":
-            icon = manifest.icons[48];
+            icon = "assets/icons/on/48.png";
             title = `${config.displayName} est en live ! Cliquez pour plus d'informations.`;
             break;
         case "offline":
-            icon = manifest.browser_action.default_icon[48];
+            icon = "assets/icons/off/48.png";
             title = `${config.displayName} est hors-ligne ! Cliquez pour plus d'informations.`;
             break;
     }
@@ -32,7 +32,7 @@ const sendNotif = ({ event, url, eventStartTime, eventDesc = "", eventTitle = ""
         type: "basic",
         title: "",
         message: "",
-        iconUrl: manifest.icons[128]
+        iconUrl: "assets/icons/on/128.png",
     };
 
     switch (event) {
