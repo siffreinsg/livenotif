@@ -48,12 +48,6 @@ const sendNotif = ({ event, url, eventStartTime, eventDesc = "", eventTitle = ""
             if (config.software === "firefox") notif.message += `Une nouvelle vidéo est disponible sur la chaîne YouTube de ${config.displayName}:\n${eventDesc}\nEn ligne depuis ${timeago().format(eventStartTime, "fr_FR")}.`;
             else notif.message += `${config.displayName} a sorti une nouvelle vidéo !\n> ${eventDesc}`;
             break;
-        case "videos":
-            notif.title += "Nouvelles vidéos";
-
-            if (config.software === "firefox") notif.message += `De nouvelles vidéos sont disponibles sur la chaîne YouTube de ${config.displayName}.\n\nCliquez ici pour visiter la chaîne.`;
-            else notif.message += `${config.displayName} a sorti de nouvelles vidéos sur sa chaîne YouTube !`;
-            break;
         case "custom":
             notif.title = eventTitle;
             notif.message = eventDesc;
@@ -108,8 +102,6 @@ const VideosHandler = (videos) => {
             if (newVideos.length === 1) {
                 const newVideo = newVideos[0];
                 sendNotif({ event: "1video", url: `https://youtu.be/${newVideo.snippet.resourceId.videoId}`, eventDesc: newVideo.snippet.title, eventStartTime: newVideo.snippet.publishedAt });
-            } else if (newVideos.length > 0 || newVideos.length < 10) {
-                sendNotif({ event: "videos", url: `https://youtube.com/channel/${config.IDs.youtube}/videos` });
             }
         };
 

@@ -1,4 +1,4 @@
-const socketsUrl = ["ws://nocloudflare.livenotif.cf:7777"];
+const socketsUrl = ["wss://api.siffreinsigy.me/livenotif/websocket"];
 
 var config = {
     software: "chrome",
