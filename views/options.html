@@ -7,24 +7,44 @@
 </head>
 
 <body>
+    <div style="text-align: center">
+        <h2>Paramètres</h2>
+    </div>
+
     <fieldset>
-        <legend>
-            <b>Réglage des notifications</b>
-        </legend>
+        <legend><b>Types de notifications</b></legend>
 
         <label class="form-switch">
-            <input type="checkbox" id="streamsNotif">
+            <input type="checkbox" id="streams">
             <i></i>
-            <em>Annonce des streams</em>
+            <em>Streams (Twitch, YouTube, ...)</em>
         </label>
         <br>
 
         <label class="form-switch">
-            <input type="checkbox" id="videosNotif">
+            <input type="checkbox" id="videos">
             <i></i>
-            <em>Annonce des vidéos</em>
+            <em>Vidéos (YouTube, Dailymotion, ...)</em>
         </label>
         <br>
+
+        <label class="form-switch">
+            <input type="checkbox" id="system">
+            <i></i>
+            <em>Système (Mises à jour, infos, ...)</em>
+        </label>
+        <br>
+
+        <label class="form-switch">
+            <input type="checkbox" id="other">
+            <i></i>
+            <em>Autre</em>
+        </label>
+        <br>
+    </fieldset>
+
+    <fieldset>
+        <legend><b>Paramètres sonore</b></legend>
 
         <label class="form-switch">
             <input type="checkbox" id="playSound">
@@ -34,36 +54,36 @@
         <br>
 
         <label class="form-switch">
-            <input type="checkbox" id="blinkingIcon">
-            <i></i>
-            <em>Icône clignotante</em>
-        </label>
-        <br>
-
-        <label class="form-switch">
-            <input type="checkbox" id="devMode">
-            <i></i>
-            <em>Mode développeur</em>
-        </label>
-        <br>
-
-        <label class="form-switch">
-            <select name="soundSelect" id="soundSelect"></select>
+            <select id="sound"></select>
             <em>Son des notifications</em>
         </label>
         <br>
 
         <label class="form-input">
-            <input type="range" step="0.1" min="0" max="1" id="soundVolume"></input>
+            <input type="range" step="0.1" min="0" max="1" id="volume"></input>
             <em>Volume des notifications</em>
         </label>
         <br>
+    </fieldset>
 
+    <fieldset>
+        <legend><b>Autres paramètres</b></legend>
+
+        <label class="form-switch">
+            <input type="checkbox" id="blink">
+            <i></i>
+            <em>Icône clignotante</em>
+        </label>
+        <br>
+    </fieldset>
+
+    <div style="text-align: center">
         <span>
             <button type="submit" id="save">Sauvegarder</button>
             <button type="button" id="testSound">Tester le son</button>
         </span>
-    </fieldset>
+    </div>
+
     <script src="../assets/js/browser-polyfill.min.js"></script>
     <script src="../assets/js/options.js"></script>
 </body>

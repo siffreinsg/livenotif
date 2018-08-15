@@ -1,58 +1,59 @@
-const { sounds } = browser.extension.getBackgroundPage();
+const bg = browser.extension.getBackgroundPage();
 
 document.addEventListener("DOMContentLoaded", () => {
-    var e = {
-        streamsNotif: document.getElementById("streamsNotif"),
-        videosNotif: document.getElementById("videosNotif"),
-        playSound: document.getElementById("playSound"),
-        blinkingIcon: document.getElementById("blinkingIcon"),
-        devMode: document.getElementById("devMode"),
-        soundSelect: document.getElementById("soundSelect"),
-        soundVolume: document.getElementById("soundVolume"),
-        testSound: document.getElementById("testSound")
-    };
+    const e = {}
+    const elementsList = ["streams", "videos", "system", "other", "playSound", "sound", "volume", "blink", "save", "testSound"]
 
-    browser.storage.local.get(["notifStreams", "notifVideos", "playSound", "blinkingIcon", "selectedSound", "volume", "devMode"]).then(result => {
-        e.streamsNotif.checked = result.notifStreams !== "no";
-        e.videosNotif.checked = result.notifVideos !== "no";
-        e.playSound.checked = result.playSound !== "no";
-        e.blinkingIcon.checked = result.blinkingIcon !== "no";
-        e.devMode.checked = result.devMode === "yes";
-        e.soundVolume.value = result.volume;
+    elementsList.forEach((el) => { e[el] = document.getElementById(el); });
 
-        sounds.forEach((el, key) => {
-            let opt = document.createElement("option");
-            opt.value = key;
-            opt.innerHTML = el.name;
+    browser.storage.local.get(["notifStreams", "notifVideos", "notifSystem", "otherNotif", "playSound", "blinkingIcon", "selectedSound", "volume", "devMode"])
+        .then(result => {
+            e.streams.checked = result.notifStreams !== "no";
+            e.videos.checked = result.notifVideos !== "no";
+            e.system.checked = result.notifSystem !== "no";
+            e.other.checked = result.otherNotif !== "no";
+            e.playSound.checked = result.playSound !== "no";
+            e.blink.checked = result.blinkingIcon !== "no";
+            e.volume.value = result.volume;
 
-            if ((!result.selectedSound && parseInt(key) === 0) || parseInt(key) === parseInt(result.selectedSound)) {
-                opt.selected = "selected";
+            bg.appConfig.sounds.forEach((el, key) => {
+                const opt = document.createElement("option");
+                opt.value = key;
+                opt.innerHTML = el.name;
+
+                if ((!result.selectedSound && parseInt(key) === 0) || parseInt(key) === parseInt(result.selectedSound)) {
+                    opt.selected = "selected";
+                }
+                e.sound.appendChild(opt);
+            });
+
+            e.testSound.onclick = () => {
+                const selectedSound = e.sound.options[e.sound.selectedIndex].value
+                const soundPath = bg.appConfig.sounds[selectedSound].path;
+                const soundPlayer = new Audio("../" + soundPath);
+
+                soundPlayer.volume = e.volume.value;
+                soundPlayer.play();
+            };
+
+            e.save.onclick = () => {
+                const toSave = {
+                    notifStreams: e.streams.checked ? "yes" : "no",
+                    notifVideos: e.videos.checked ? "yes" : "no",
+                    notifSystem: e.system.checked ? "yes" : "no",
+                    otherNotif: e.other.checked ? "yes" : "no",
+                    playSound: e.playSound.checked ? "yes" : "no",
+                    blinkingIcon: e.blink.checked ? "yes" : "no",
+                    selectedSound: e.sound.options[e.sound.selectedIndex].value || 0,
+                    volume: e.volume.value || 0.5,
+                    silentReload: "yes"
+                }
+
+                browser.storage.local.set(toSave)
+                    .then(() => {
+                        browser.runtime.reload();
+                        setTimeout(window.close, 300);
+                    });
             }
-            e.soundSelect.appendChild(opt);
         });
-
-        e.testSound.onclick = () => {
-            let selectedSound = e.soundSelect.options[e.soundSelect.selectedIndex].value;
-            let player = sounds[selectedSound].player;
-
-            player.volume = e.soundVolume.value;
-            player.play();
-        };
-
-        document.getElementById("save").onclick = () => {
-            let notifStreams = e.streamsNotif.checked ? "yes" : "no";
-            let notifVideos = e.videosNotif.checked ? "yes" : "no";
-            let playSound = e.playSound.checked ? "yes" : "no";
-            let devMode = e.devMode.checked ? "yes" : "no";
-            let blinkingIcon = e.blinkingIcon.checked ? "yes" : "no";
-            let selectedSound = e.soundSelect.options[e.soundSelect.selectedIndex].value || 0;
-            let volume = e.soundVolume.value || 0.5;
-
-            browser.storage.local.set({ notifStreams, notifVideos, playSound, blinkingIcon, selectedSound, volume, devMode, silentReload: "yes" })
-                .then(() => {
-                    browser.runtime.reload();
-                    setTimeout(window.close, 300);
-                });
-        }
-    });
 });

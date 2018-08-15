@@ -1,4 +1,4 @@
-loadUserConfig()
+loadUserConfig(appConfig)
     .then((userConfig) => {
         config = { ...appConfig, ...userConfig }
         setStatus("offline");

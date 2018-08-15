@@ -1,4 +1,3 @@
-var manifest = browser.runtime.getManifest();
 var currentEvent = {};
 var dontBlink = false;
 var connected = false;
