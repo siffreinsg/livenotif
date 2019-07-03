@@ -2,7 +2,7 @@
     "name": "LiveNotif - [Name]",
     "short_name": "[Name]",
     "description": "Envoie une notification quand [Name] est en live ou sort une vidéo.",
-    "version": "3.2.0",
+    "version": "3.2.1",
     "browser_action": {
         "default_title": "[Name] est hors-ligne.",
         "default_icon": {
