@@ -103,9 +103,13 @@ const VideosHandler = (videos) => {
                 const newVideo = newVideos[0];
                 sendNotif({ event: "1video", url: `https://youtu.be/${newVideo.snippet.resourceId.videoId}`, eventDesc: newVideo.snippet.title, eventStartTime: newVideo.snippet.publishedAt });
             }
-        };
+        } else {
+            res.lastVideosId = [];
+        }
 
-        browser.storage.local.set({ lastVideosId: videos.map(video => video.snippet.resourceId.videoId) });
+        browser.storage.local.set({ 
+            lastVideosId: res.lastVideosId.concat(videos.map(video => video.snippet.resourceId.videoId).filter(item => res.lastVideosId.indexOf(item) < 0))
+        });
     });
 
 }
