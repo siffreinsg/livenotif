@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: livenotif.js.org
+Token: 49cb92f024cc9e0c282c863dc9ccf10b4199ba83a282fb4b1327bd2e08038cb0
